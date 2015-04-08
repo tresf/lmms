@@ -23,13 +23,13 @@
  */
 
 
-#ifndef FLANGEREFFECT_H
-#define FLANGEREFFECT_H
+#ifndef HAASSANEFFECT_H
+#define HAASSANEFFECT_H
 
 #include "Effect.h"
 #include "HaassanControls.h"
 
-#include "../flanger/monodelay.h"
+#include "../Flanger/MonoDelay.h"
 
 
 
@@ -52,4 +52,4 @@ private:
 
 };
 
-#endif // FLANGEREFFECT_H
+#endif // HAASSANEFFECT_H

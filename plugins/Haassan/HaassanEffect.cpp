@@ -29,7 +29,7 @@
 extern "C"
 {
 
-Plugin::Descriptor PLUGIN_EXPORT flanger_plugin_descriptor =
+Plugin::Descriptor PLUGIN_EXPORT haassan_plugin_descriptor =
 {
 	STRINGIFY( PLUGIN_NAME ),
 	"Haassan",
@@ -46,7 +46,7 @@ Plugin::Descriptor PLUGIN_EXPORT flanger_plugin_descriptor =
 
 
 HaassanEffect::HaassanEffect( Model *parent, const Plugin::Descriptor::SubPluginFeatures::Key *key ) :
-	Effect( &flanger_plugin_descriptor, parent, key ),
+	Effect( &haassan_plugin_descriptor, parent, key ),
 	m_haassanControls( this )
 {
 	m_delay = new MonoDelay( 1, Engine::mixer()->processingSampleRate() );
