@@ -48,7 +48,7 @@ public:
 	}
 	virtual int controlCount()
 	{
-		return 3;
+		return 7;
 	}
 	virtual EffectControlDialog* createView()
 	{
@@ -60,9 +60,15 @@ private slots:
 
 private:
 	HaassanEffect* m_effect;
-	FloatModel m_delayTimeModel;
-	FloatModel m_polarAmountModel;
-	FloatModel m_widthAmountModel;
+	FloatModel m_lowDelayTimeModel;
+	FloatModel m_lowPolarAmountModel;
+	FloatModel m_lowWidthAmountModel;
+
+	FloatModel m_crossoverFrequencyModel;
+
+	FloatModel m_hiDelayTimeModel;
+	FloatModel m_hiPolarAmountModel;
+	FloatModel m_hiWidthAmountModel;
 
 
 	friend class HassanControlsDialog;

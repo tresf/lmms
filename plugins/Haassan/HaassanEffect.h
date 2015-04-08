@@ -28,6 +28,7 @@
 
 #include "Effect.h"
 #include "HaassanControls.h"
+#include "BasicFilters.h"
 
 #include "../Flanger/MonoDelay.h"
 
@@ -47,7 +48,11 @@ public:
 
 private:
 	HaassanControls m_haassanControls;
-	MonoDelay* m_delay;
+	MonoDelay* m_lowDelay;
+	MonoDelay* m_hiDelay;
+
+	StereoLinkwitzRiley m_lowPass;
+	StereoLinkwitzRiley m_hiPass;
 
 
 };

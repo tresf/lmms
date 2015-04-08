@@ -34,11 +34,16 @@
 HaassanControls::HaassanControls( HaassanEffect *effect ) :
 	EffectControls ( effect ),
 	m_effect ( effect ),
-	m_delayTimeModel(0.001, 0.0001, 0.035, 0.001,  this, tr( "Delay Samples" ) ) ,
-	m_polarAmountModel( 0.0, 0.0, 1.0, 0.0001, this, tr( "Polar Amount" ) ),
-	m_widthAmountModel( 1.0, 0.0, 5.0, 0.0001, this, tr( "Width" ) )
+	m_lowDelayTimeModel(0.001, 0.000, 0.035, 0.001,  this, tr( "Delay" ) ) ,
+	m_lowPolarAmountModel( 0.0, 0.0, 1.0, 0.0001, this, tr( "Polar Amount" ) ),
+	m_lowWidthAmountModel( 1.0, 0.0, 5.0, 0.0001, this, tr( "Width" ) ),
+	m_hiDelayTimeModel( 0.0, 0.0, 0.035, 0.001, this, tr( "Delay") ),
+	m_hiPolarAmountModel( 0.0, 0.0, 1.0, 0.0001, this, tr( "Polar Amount" ) ),
+	m_hiWidthAmountModel( 1.0, 0.0, 5.0, 0.0001, this, tr( "Width" ) ),
+	m_crossoverFrequencyModel( 80, 20, 20000, 0.001, this, tr( "Crossover Freqncy" ) )
 {
 	connect( Engine::mixer(), SIGNAL( sampleRateChanged() ), this, SLOT( changedSampleRate() ) );
+	m_crossoverFrequencyModel.setScaleLogarithmic( true );
 }
 
 
@@ -46,9 +51,13 @@ HaassanControls::HaassanControls( HaassanEffect *effect ) :
 
 void HaassanControls::loadSettings( const QDomElement &_this )
 {
-	m_delayTimeModel.loadSettings( _this, "DelayTimeSamples" );
-	m_polarAmountModel.loadSettings( _this, "PolarAmount" );
-	m_widthAmountModel.loadSettings( _this, "Width" );
+	m_lowDelayTimeModel.loadSettings( _this, "LowDelayTimeSamples" );
+	m_lowPolarAmountModel.loadSettings( _this, "LowPolarAmount" );
+	m_lowWidthAmountModel.loadSettings( _this, "LowWidth" );
+	m_crossoverFrequencyModel.loadSettings( _this, "Crossover" );
+	m_hiDelayTimeModel.loadSettings( _this, "HiDelayTimeSamples" );
+	m_hiPolarAmountModel.loadSettings( _this, "HiPolarAmount" );
+	m_hiWidthAmountModel.loadSettings( _this, "HiWidth" );
 
 }
 
@@ -57,9 +66,13 @@ void HaassanControls::loadSettings( const QDomElement &_this )
 
 void HaassanControls::saveSettings( QDomDocument &doc, QDomElement &parent )
 {
-	m_delayTimeModel.saveSettings( doc , parent, "DelayTimeSamples" );
-	m_polarAmountModel.saveSettings( doc, parent, "PolarAmount" );
-	m_widthAmountModel.saveSettings( doc, parent, "Width" );
+	m_lowDelayTimeModel.saveSettings( doc , parent, "LowDelayTimeSamples" );
+	m_lowPolarAmountModel.saveSettings( doc, parent, "LowPolarAmount" );
+	m_lowWidthAmountModel.saveSettings( doc, parent, "LowWidth" );
+	m_crossoverFrequencyModel.saveSettings( doc, parent, "Crossover" );
+	m_hiDelayTimeModel.saveSettings( doc , parent, "HiDelayTimeSamples" );
+	m_hiPolarAmountModel.saveSettings( doc, parent, "HiPolarAmount" );
+	m_hiWidthAmountModel.saveSettings( doc, parent, "HiWidth" );
 }
 
 

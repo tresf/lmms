@@ -38,26 +38,55 @@ HassanControlsDialog::HassanControlsDialog( HaassanControls *controls ) :
 	QPalette pal;
 	pal.setBrush( backgroundRole(), PLUGIN_NAME::getIconPixmap( "artwork" ) );
 	setPalette( pal );
-	setFixedSize( 200, 75 );
+	setFixedSize( 130, 130 );
 
-	Knob* delayKnob = new Knob( knobBright_26, this );
-	delayKnob->move( 20,10 );
-	delayKnob->setVolumeKnob( false );
-	delayKnob->setModel( &controls->m_delayTimeModel );
-	delayKnob->setLabel( tr( "Delay" ) );
-	delayKnob->setHintText( tr( "Delay Time:" ) + " ", "" );
+	Knob* lowDelayKnob = new Knob( knobBright_26, this );
+	lowDelayKnob->move( 20,90 );
+	lowDelayKnob->setVolumeKnob( false );
+	lowDelayKnob->setModel( &controls->m_lowDelayTimeModel );
+	lowDelayKnob->setLabel( tr( "Delay" ) );
+	lowDelayKnob->setHintText( tr( "Delay Time:" ) + " ", "" );
 
-	Knob* polarKnob = new Knob( knobBright_26, this );
-	polarKnob->move( 60, 10 );
-	polarKnob->setVolumeKnob( false );
-	polarKnob->setModel( &controls->m_polarAmountModel );
-	polarKnob->setLabel( tr( "Polar" ) );
-	polarKnob->setHintText( tr( "Polar Amount" ) + " ", "");
+	Knob* lowPolarKnob = new Knob( knobBright_26, this );
+	lowPolarKnob->move( 60, 90 );
+	lowPolarKnob->setVolumeKnob( false );
+	lowPolarKnob->setModel( &controls->m_lowPolarAmountModel );
+	lowPolarKnob->setLabel( tr( "Polar" ) );
+	lowPolarKnob->setHintText( tr( "Polar Amount" ) + " ", "");
 
-	Knob* widthKnob = new Knob( knobBright_26, this );
-	widthKnob->move( 100, 10 );
-	widthKnob->setVolumeKnob( false );
-	widthKnob->setModel( &controls->m_widthAmountModel );
-	widthKnob->setLabel( tr( "Width" ) );
-	widthKnob->setHintText( tr( "Width Amount" ) + " ", "");
+	Knob* lowWidthKnob = new Knob( knobBright_26, this );
+	lowWidthKnob->move( 100, 90 );
+	lowWidthKnob->setVolumeKnob( false );
+	lowWidthKnob->setModel( &controls->m_lowWidthAmountModel );
+	lowWidthKnob->setLabel( tr( "Width" ) );
+	lowWidthKnob->setHintText( tr( "Width Amount" ) + " ", "");
+
+	Knob* crossoverKnob = new Knob( knobBright_26, this );
+	crossoverKnob->move( 60, 50 );
+	crossoverKnob->setVolumeKnob( false );
+	crossoverKnob->setModel( &controls->m_crossoverFrequencyModel );
+	crossoverKnob->setLabel( tr( "CrossOver" ) );
+	crossoverKnob->setHintText( tr( "Crossover Frequency" ) + " ", "");
+
+	Knob* hiDelayKnob = new Knob( knobBright_26, this );
+	hiDelayKnob->move( 20,10 );
+	hiDelayKnob->setVolumeKnob( false );
+	hiDelayKnob->setModel( &controls->m_hiDelayTimeModel );
+	hiDelayKnob->setLabel( tr( "Delay" ) );
+	hiDelayKnob->setHintText( tr( "Delay Time:" ) + " ", "" );
+
+	Knob* hiPolarKnob = new Knob( knobBright_26, this );
+	hiPolarKnob->move( 60, 10 );
+	hiPolarKnob->setVolumeKnob( false );
+	hiPolarKnob->setModel( &controls->m_hiPolarAmountModel );
+	hiPolarKnob->setLabel( tr( "Polar" ) );
+	hiPolarKnob->setHintText( tr( "Polar Amount" ) + " ", "");
+
+	Knob* hiWidthKnob = new Knob( knobBright_26, this );
+	hiWidthKnob->move( 100, 10 );
+	hiWidthKnob->setVolumeKnob( false );
+	hiWidthKnob->setModel( &controls->m_hiWidthAmountModel );
+	hiWidthKnob->setLabel( tr( "Width" ) );
+	hiWidthKnob->setHintText( tr( "Width Amount" ) + " ", "");
+
 }
