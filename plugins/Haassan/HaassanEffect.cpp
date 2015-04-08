@@ -25,6 +25,7 @@
 #include "HaassanEffect.h"
 #include "Engine.h"
 #include "embed.cpp"
+#include "lmms_math.h"
 
 extern "C"
 {
@@ -82,8 +83,32 @@ bool HaassanEffect::processAudioBuffer( sampleFrame *buf, const fpp_t frames )
 	{
 		dryS[0] = buf[f][0];
 		dryS[1] = buf[f][1];
+		//HAAS
 		m_delay->setLength( ( float )length );
-			m_delay->tick( &buf[f][0] );
+		m_delay->tick( &buf[f][0] );
+		//POLAR
+		sample_t temp = buf[f][0];
+		buf[f][0] += buf[f][1] * m_haassanControls.m_polarAmountModel.value();
+		buf[f][1] += temp * m_haassanControls.m_polarAmountModel.value();
+		buf[f][0] *=  1 - m_haassanControls.m_polarAmountModel.value()  * 0.25;
+		buf[f][1] *=  1 - m_haassanControls.m_polarAmountModel.value()  * 0.25;
+
+		//Stereo Width Control (Obtained Via Transfromation Matrix)
+		//Michael Gruhn
+		//http://www.musicdsp.org/showArchiveComment.php?ArchiveID=256
+
+		float tmp = 1/max( 1 + m_haassanControls.m_widthAmountModel.value(), 2.0f );
+		float coef_M = 1 * tmp;
+		float coef_S = m_haassanControls.m_widthAmountModel.value() * tmp;
+
+		float m = ( buf[f][0] + buf[f][1] ) * coef_M;
+		float s = ( buf[f][1] - buf[f][0] ) * coef_S;
+
+		buf[f][0] = m - s;
+		buf[f][1] = m + s;
+
+
+		//wet dry mix
 		buf[f][0] = ( d * dryS[0] ) + ( w * buf[f][0] );
 		buf[f][1] = ( d * dryS[1] ) + ( w * buf[f][1] );
 		outSum += buf[f][0]*buf[f][0] + buf[f][1]*buf[f][1];

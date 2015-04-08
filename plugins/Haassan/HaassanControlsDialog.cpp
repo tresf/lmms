@@ -53,4 +53,11 @@ HassanControlsDialog::HassanControlsDialog( HaassanControls *controls ) :
 	polarKnob->setModel( &controls->m_polarAmountModel );
 	polarKnob->setLabel( tr( "Polar" ) );
 	polarKnob->setHintText( tr( "Polar Amount" ) + " ", "");
+
+	Knob* widthKnob = new Knob( knobBright_26, this );
+	widthKnob->move( 100, 10 );
+	widthKnob->setVolumeKnob( false );
+	widthKnob->setModel( &controls->m_widthAmountModel );
+	widthKnob->setLabel( tr( "Width" ) );
+	widthKnob->setHintText( tr( "Width Amount" ) + " ", "");
 }

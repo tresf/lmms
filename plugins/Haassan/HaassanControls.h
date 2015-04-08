@@ -44,11 +44,11 @@ public:
 	virtual void loadSettings ( const QDomElement &_this );
 	inline virtual QString nodeName() const
 	{
-		return "Flanger";
+		return "Haassan";
 	}
 	virtual int controlCount()
 	{
-		return 5;
+		return 3;
 	}
 	virtual EffectControlDialog* createView()
 	{
@@ -62,6 +62,7 @@ private:
 	HaassanEffect* m_effect;
 	FloatModel m_delayTimeModel;
 	FloatModel m_polarAmountModel;
+	FloatModel m_widthAmountModel;
 
 
 	friend class HassanControlsDialog;

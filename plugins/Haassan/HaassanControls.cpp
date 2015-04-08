@@ -32,12 +32,13 @@
 
 
 HaassanControls::HaassanControls( HaassanEffect *effect ) :
-    EffectControls ( effect ),
-    m_effect ( effect ),
+	EffectControls ( effect ),
+	m_effect ( effect ),
 	m_delayTimeModel(0.001, 0.0001, 0.035, 0.001,  this, tr( "Delay Samples" ) ) ,
-	m_polarAmountModel( 0.0, 0.0, 1.0, 0.0001, this, tr( "Polar Amount" ) )
+	m_polarAmountModel( 0.0, 0.0, 1.0, 0.0001, this, tr( "Polar Amount" ) ),
+	m_widthAmountModel( 1.0, 0.0, 5.0, 0.0001, this, tr( "Width" ) )
 {
-    connect( Engine::mixer(), SIGNAL( sampleRateChanged() ), this, SLOT( changedSampleRate() ) );
+	connect( Engine::mixer(), SIGNAL( sampleRateChanged() ), this, SLOT( changedSampleRate() ) );
 }
 
 
@@ -45,8 +46,9 @@ HaassanControls::HaassanControls( HaassanEffect *effect ) :
 
 void HaassanControls::loadSettings( const QDomElement &_this )
 {
-    m_delayTimeModel.loadSettings( _this, "DelayTimeSamples" );
+	m_delayTimeModel.loadSettings( _this, "DelayTimeSamples" );
 	m_polarAmountModel.loadSettings( _this, "PolarAmount" );
+	m_widthAmountModel.loadSettings( _this, "Width" );
 
 }
 
@@ -55,8 +57,9 @@ void HaassanControls::loadSettings( const QDomElement &_this )
 
 void HaassanControls::saveSettings( QDomDocument &doc, QDomElement &parent )
 {
-    m_delayTimeModel.saveSettings( doc , parent, "DelayTimeSamples" );
+	m_delayTimeModel.saveSettings( doc , parent, "DelayTimeSamples" );
 	m_polarAmountModel.saveSettings( doc, parent, "PolarAmount" );
+	m_widthAmountModel.saveSettings( doc, parent, "Width" );
 }
 
 
@@ -64,7 +67,7 @@ void HaassanControls::saveSettings( QDomDocument &doc, QDomElement &parent )
 
 void HaassanControls::changedSampleRate()
 {
-    m_effect->changeSampleRate();
+	m_effect->changeSampleRate();
 }
 
 
