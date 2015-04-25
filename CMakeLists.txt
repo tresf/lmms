@@ -23,7 +23,7 @@ IF(VERSION_SUFFIX)
 ENDIF(VERSION_SUFFIX)
 
 INCLUDE(DetectMachine)
-
+IF(LMMS_BUILD_LINUX)
 #Include RTOSC
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/plugins/zynaddsubfx/rtosc/CMakeLists.txt")
     message(STATUS "RTOSC NOT FOUND")
@@ -39,6 +39,7 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/plugins/zynaddsubfx/rtosc/CMakeLists.
 else()
     message(STATUS "Found Rtosc Submodule...")
 endif()
+ENDIF(LMMS_BUILD_LINUX)
 
 set(RTOSC_NO_INSTALL TRUE)
 include("plugins/zynaddsubfx/rtosc/cmake/ColorMessage.cmake")
