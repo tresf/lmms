@@ -39,12 +39,12 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/plugins/zynaddsubfx/rtosc/CMakeLists.
 else()
     message(STATUS "Found Rtosc Submodule...")
 endif()
-ENDIF(LMMS_BUILD_LINUX)
 
 set(RTOSC_NO_INSTALL TRUE)
 include("plugins/zynaddsubfx/rtosc/cmake/ColorMessage.cmake")
 add_subdirectory(plugins/zynaddsubfx/rtosc)
 include_directories(plugins/zynaddsubfx/rtosc/include)
+ENDIF(LMMS_BUILD_LINUX)
 
 
 OPTION(WANT_ALSA	"Include ALSA (Advanced Linux Sound Architecture) support" ON)
