@@ -239,7 +239,7 @@ void ConfigManager::setValue( const QString & _class,
 }
 
 
-
+/*
 #ifdef LMMS_BUILD_WIN32
 #include <QLibrary>
 #include <shlobj.h>
@@ -262,6 +262,7 @@ static QString windowsConfigPath( int _type )
 	return result;
 }
 #endif
+*/
 
 
 
@@ -366,8 +367,8 @@ void ConfigManager::loadConfigFile()
 			!QDir( m_vstDir ).exists() )
 	{
 #ifdef LMMS_BUILD_WIN32
-		m_vstDir = windowsConfigPath( CSIDL_PROGRAM_FILES ) +
-											QDir::separator() + "VstPlugins";
+//		m_vstDir = windowsConfigPath( CSIDL_PROGRAM_FILES ) +
+//											QDir::separator() + "VstPlugins";
 #else
 		m_vstDir = ensureTrailingSlash( QDir::home().absolutePath() );
 #endif
