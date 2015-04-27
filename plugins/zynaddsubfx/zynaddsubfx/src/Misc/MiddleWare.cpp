@@ -32,7 +32,19 @@
 #include <atomic>
 #include <list>
 
-//#include <err.h>
+#ifndef WIN32
+    #include <err.h>
+#else
+void warnx (const char *text, ...)
+{
+    puts(text);
+}
+void errx (int status,const char *text, ...)
+{
+    puts(text);
+    exit(status);
+}
+#endif
 
 using std::string;
 extern rtosc::ThreadLink *the_bToU;//XXX
@@ -203,11 +215,7 @@ void refreshBankView(const Bank &bank, unsigned loc, Fl_Osc_Interface *osc)
     if(!rtosc_message(response, 1024, "/bankview", "iss",
                 loc, bank.ins[loc].name.c_str(),
                 bank.ins[loc].filename.c_str()))
-    {
-//        errx(1, "Failure to handle bank update properly...");
-          printf("Failure to handle bank update properly...");
-          exit(1);
-    }
+        errx(1, "Failure to handle bank update properly...");
 
 
     osc->tryLink(response);
@@ -221,11 +229,7 @@ void bankList(Bank &bank, Fl_Osc_Interface *osc)
     for(auto &elm : bank.banks) {
         if(!rtosc_message(response, 2048, "/bank-list", "iss",
                     i++, elm.name.c_str(), elm.dir.c_str()))
-        {
-//            errx(1, "Failure to handle bank update properly...");
-            printf("Failure to handle bank update properly...");
-            exit(1);
-        }
+            errx(1, "Failure to handle bank update properly...");
         osc->tryLink(response);
     }
 }
@@ -251,11 +255,7 @@ void bankPos(Bank &bank, Fl_Osc_Interface *osc)
     char response[2048];
 
     if(!rtosc_message(response, 2048, "/loadbank", "i", bank.bankpos))
-    {
-//        errx(1, "Failure to handle bank update properly...");
-        printf("Failure to handle bank update properly...");
-        exit(1);
-    }
+        errx(1, "Failure to handle bank update properly...");
     osc->tryLink(response);
 }
 
@@ -640,8 +640,9 @@ public:
             return;
         assert(actual_load[npart] <= pending_load[npart]);
 
-//        auto alloc = std::async(std::launch::async,
-//                [master,filename,this,npart](){
+#ifndef WIN32
+        auto alloc = std::async(std::launch::async,
+                [master,filename,this,npart](){
                 Part *p = new Part(*master->memory, &master->microtonal, master->fft);
                 if(p->loadXMLinstrument(filename))
                 fprintf(stderr, "Warning: failed to load part!\n");
@@ -651,8 +652,17 @@ public:
                 };
 
                 p->applyparameters(isLateLoad);
-//                return p; //});
-                auto alloc = p; //added win
+                return p; });
+#else
+        Part *p = new Part(*master->memory, &master->microtonal, master->fft);
+        if(p->loadXMLinstrument(filename))
+        fprintf(stderr, "Warning: failed to load part!\n");
+
+        auto isLateLoad = [this,npart]{
+        return actual_load[npart] != pending_load[npart];
+        };
+        p->applyparameters(isLateLoad);
+#endif
 
         //Load the part
         if(idle) {
@@ -661,8 +671,9 @@ public:
 //            }
 			sleep(1);
         }
-
-//        Part *p = alloc.get();
+#ifndef WIN32
+        Part *p = alloc.get();
+#endif
 
         obj_store.extractPart(p, npart);
         kits.extractPart(p, npart);

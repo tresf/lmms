@@ -1493,13 +1493,15 @@ bankui=new BankUI(&npart, osc);
 configui=new ConfigUI();
 
 make_window();
+#ifndef LMMS_BUILD_WIN32
 //fl_open_display();
+#endif
 
-//  \#ifndef __APPLE
+#ifndef __APPLE & WIN32
 //Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
 //                                 (char*)zynaddsubfx_bits, zynaddsubfx_width, zynaddsubfx_height);
 //masterwindow->icon((char *)p);
-//\#endif
+#endif
 presetsui=new PresetsUI();
 setfilelabel(NULL);
 swapefftype=0;

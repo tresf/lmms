@@ -56,14 +56,14 @@ add_library(zynaddsubfx_gui STATIC
         FormantFilterGraph.cpp
         EnvelopeFreeEdit.cpp
         BankView.cpp
-                Connection.cpp
-	${zynaddsubfx_gui_FLTK_UI_SRCS}
+        Connection.cpp
+        ${zynaddsubfx_gui_FLTK_UI_SRCS}
         NioUI.cpp
         WidgetPDial.cpp
-	)
+        )
 
 if(NtkGui)
-  target_link_libraries(zynaddsubfx_gui ${NTK_LIBRARIES} )
+  target_link_libraries(zynaddsubfx_gui ${NTK_LIBRARIES} ${NTK_IMAGES_LIBRARIES})
 endif(NtkGui)
 
 set(FltkGui true)

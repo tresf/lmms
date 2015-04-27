@@ -36,7 +36,9 @@
 #include <rtosc/ports.h>
 #include <rtosc/port-sugar.h>
 
-//pthread_t main_thread;
+#ifndef WIN32
+pthread_t main_thread;
+#endif
 
 #define PC(x) rParamZyn(P##x, "undocumented oscilgen parameter")
 
@@ -159,7 +161,9 @@ static rtosc::Ports localPorts = {
             //fprintf(stderr, "\n\n");
             //fprintf(stderr, "The ID of this of this thread is: %ld\n", (long)pthread_self());
             //fprintf(stderr, "o.oscilFFTfreqs = %p\n", o.oscilFFTfreqs);
-//            assert(main_thread != pthread_self());
+#ifndef WIN32 // remove thread checking on windows !!!
+            assert(main_thread != pthread_self());
+#endif
             assert(o.oscilFFTfreqs !=*(fft_t**)rtosc_argument(m,0).b.data);
             o.oscilFFTfreqs = *(fft_t**)rtosc_argument(m,0).b.data;
         }},
@@ -648,17 +652,15 @@ void OscilGen::spectrumadjust(fft_t *freqs)
             par = powf(10.0f, (1.0f - par) * 3.0f) * 0.001f;
             break;
     }
-//#ifdef(WIN32)
-    #define _USE_MATH_DEFINES
+#ifdef WIN32
     #define M_PI_2     1.57079632679489661923
-//#endif(WIN32)
+#endif
 
 
     normalize(freqs);
 
     for(int i = 0; i < synth->oscilsize / 2; ++i) {
         float mag   = abs(oscilFFTfreqs, i);
-
         float phase = M_PI_2 - arg(oscilFFTfreqs, i);
 
         switch(Psatype) {

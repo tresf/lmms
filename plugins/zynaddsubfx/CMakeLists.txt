@@ -1,7 +1,7 @@
 INCLUDE(BuildPlugin)
 
 IF(LMMS_BUILD_WIN32)
-    SET(WIN32 1)
+    SET(WIN32 TRUE)
 ENDIF(LMMS_BUILD_WIN32)
 
 # ADD_DEFINITIONS("-Doverride")   removed because removed overrides statements
@@ -33,7 +33,6 @@ ENDIF(LMMS_HOST_X86 OR LMMS_HOST_X86_64)
 # link system-libraries when on win32
 IF(LMMS_BUILD_WIN32)
 	ADD_DEFINITIONS(-DPTW32_STATIC_LIB)
-#        SET(WIN32 TRUE)
         ADD_DEFINITIONS(-DWIN32)
 ENDIF(LMMS_BUILD_WIN32)
 
@@ -126,7 +125,7 @@ SET(zynaddsubfx_core_SRCS
 
 
 ADD_LIBRARY(ZynAddSubFxCore SHARED LocalZynAddSubFx.cpp ${zynaddsubfx_core_SRCS})
-TARGET_LINK_LIBRARIES(ZynAddSubFxCore zynaddsubfx_gui zynaddsubfx_nio rtosc rtosc-cpp ${FFTW3F_LIBRARIES} ${QT_LIBRARIES} -lpthread -lz -llo -lm ) #zynaddsubfx_gui
+TARGET_LINK_LIBRARIES(ZynAddSubFxCore zynaddsubfx_gui zynaddsubfx_nio rtosc rtosc-cpp ${FFTW3F_LIBRARIES} ${QT_LIBRARIES} -lpthread -lz -llo -lm )
 IF(QT5)
 TARGET_LINK_LIBRARIES(ZynAddSubFxCore Qt5::Widgets Qt5::Xml)
 ENDIF()
@@ -156,11 +155,11 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${PLUGIN_DIR}")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ADD_EXECUTABLE(RemoteZynAddSubFx RemoteZynAddSubFx.cpp "${WINRC}")
 INSTALL(TARGETS RemoteZynAddSubFx RUNTIME DESTINATION "${PLUGIN_DIR}")
-TARGET_LINK_LIBRARIES(RemoteZynAddSubFx zynaddsubfx_gui zynaddsubfx_nio ZynAddSubFxCore rtosc rtosc-cpp ${FLTK_LIBRARIES} -lpthread  -llo -lm) #zynaddsubfx_nio
+TARGET_LINK_LIBRARIES(RemoteZynAddSubFx zynaddsubfx_gui zynaddsubfx_nio ZynAddSubFxCore rtosc rtosc-cpp ${FLTK_LIBRARIES} -lpthread  -llo -lm)
 
 # link Qt libraries when on win32
 IF(LMMS_BUILD_WIN32)
-        TARGET_LINK_LIBRARIES(RemoteZynAddSubFx ${QT_LIBRARIES} -ldl ) #${QT_LIBRARIES}
+        TARGET_LINK_LIBRARIES(RemoteZynAddSubFx ${QT_LIBRARIES} -ldl )
 ENDIF(LMMS_BUILD_WIN32)
 
 # FLTK needs X

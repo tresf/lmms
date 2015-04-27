@@ -33,7 +33,9 @@
 #include "../Misc/Util.h"
 #include "../Misc/Allocator.h"
 
+#ifdef WIN32
 #define M_PI       3.14159265358979323846
+#endif
 
 SUBnote::SUBnote(SUBnoteParameters *parameters, SynthParams &spars)
     :SynthNote(spars), pars(*parameters)
