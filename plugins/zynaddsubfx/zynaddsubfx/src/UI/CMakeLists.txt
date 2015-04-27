@@ -16,6 +16,9 @@ set(UI_fl_files
     SUBnoteUI.fl
     VirKeyboard.fl
 )
+IF(LMMS_BUILD_WIN32)
+        ADD_DEFINITIONS(-DWIN32)
+ENDIF(LMMS_BUILD_WIN32)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -23,18 +26,16 @@ set_source_files_properties(UI/MasterUI.h PROPERTIES GENERATED 1)
 fltk_wrap_ui(zynaddsubfx_gui ${UI_fl_files})
 set(LibloEnable true)
 
-if(LibloEnable)
-    set(zynaddsubfx_gui_FLTK_UI_SRCS ${zynaddsubfx_gui_FLTK_UI_SRCS} )# remove nsm NSM.C NSM/Client.C
-endif()
 if(NtkGui)
     add_definitions(-DPIXMAP_PATH="${CMAKE_INSTALL_PREFIX}/share/zynaddsubfx/pixmaps/")
     add_definitions(-DSOURCE_DIR="${CMAKE_SOURCE_DIR}")
 endif()
+if(LibloEnable)
+   set(zynaddsubfx_gui_FLTK_UI_SRCS ${zynaddsubfx_gui_FLTK_UI_SRCS} )# remove nsm NSM.C NSM/Client.C
+endif()
 
 add_library(zynaddsubfx_gui STATIC
 	${UI_objs}
-        NioUI.cpp
-        WidgetPDial.cpp
         PartNameButton.cpp
         Fl_Osc_Pane.cpp
         Fl_Osc_Widget.cpp
@@ -55,12 +56,14 @@ add_library(zynaddsubfx_gui STATIC
         FormantFilterGraph.cpp
         EnvelopeFreeEdit.cpp
         BankView.cpp
-		Connection.cpp
+                Connection.cpp
 	${zynaddsubfx_gui_FLTK_UI_SRCS}
+        NioUI.cpp
+        WidgetPDial.cpp
 	)
 
 if(NtkGui)
-  target_link_libraries(zynaddsubfx_gui ${NTK_LIBRARIES} ${NTK_IMAGES_LIBRARIES})
+  target_link_libraries(zynaddsubfx_gui ${NTK_LIBRARIES} )
 endif(NtkGui)
 
 set(FltkGui true)

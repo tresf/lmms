@@ -32,7 +32,7 @@
 #include <atomic>
 #include <list>
 
-#include <err.h>
+//#include <err.h>
 
 using std::string;
 extern rtosc::ThreadLink *the_bToU;//XXX
@@ -203,7 +203,11 @@ void refreshBankView(const Bank &bank, unsigned loc, Fl_Osc_Interface *osc)
     if(!rtosc_message(response, 1024, "/bankview", "iss",
                 loc, bank.ins[loc].name.c_str(),
                 bank.ins[loc].filename.c_str()))
-        errx(1, "Failure to handle bank update properly...");
+    {
+//        errx(1, "Failure to handle bank update properly...");
+          printf("Failure to handle bank update properly...");
+          exit(1);
+    }
 
 
     osc->tryLink(response);
@@ -217,7 +221,11 @@ void bankList(Bank &bank, Fl_Osc_Interface *osc)
     for(auto &elm : bank.banks) {
         if(!rtosc_message(response, 2048, "/bank-list", "iss",
                     i++, elm.name.c_str(), elm.dir.c_str()))
-            errx(1, "Failure to handle bank update properly...");
+        {
+//            errx(1, "Failure to handle bank update properly...");
+            printf("Failure to handle bank update properly...");
+            exit(1);
+        }
         osc->tryLink(response);
     }
 }
@@ -243,7 +251,11 @@ void bankPos(Bank &bank, Fl_Osc_Interface *osc)
     char response[2048];
 
     if(!rtosc_message(response, 2048, "/loadbank", "i", bank.bankpos))
-        errx(1, "Failure to handle bank update properly...");
+    {
+//        errx(1, "Failure to handle bank update properly...");
+        printf("Failure to handle bank update properly...");
+        exit(1);
+    }
     osc->tryLink(response);
 }
 
@@ -628,8 +640,8 @@ public:
             return;
         assert(actual_load[npart] <= pending_load[npart]);
 
-        auto alloc = std::async(std::launch::async,
-                [master,filename,this,npart](){
+//        auto alloc = std::async(std::launch::async,
+//                [master,filename,this,npart](){
                 Part *p = new Part(*master->memory, &master->microtonal, master->fft);
                 if(p->loadXMLinstrument(filename))
                 fprintf(stderr, "Warning: failed to load part!\n");
@@ -639,7 +651,8 @@ public:
                 };
 
                 p->applyparameters(isLateLoad);
-                return p;});
+//                return p; //});
+                auto alloc = p; //added win
 
         //Load the part
         if(idle) {
@@ -649,7 +662,7 @@ public:
 			sleep(1);
         }
 
-        Part *p = alloc.get();
+//        Part *p = alloc.get();
 
         obj_store.extractPart(p, npart);
         kits.extractPart(p, npart);
@@ -1064,7 +1077,7 @@ void MiddleWareImpl::handleMsg(const char *msg)
     //fprintf(stdout, "%c[%d;%d;%dm", 0x1B, 0, 6 + 30, 0 + 40);
     //fprintf(stdout, "middleware: '%s':%s\n", msg, rtosc_argument_string(msg));
     //fprintf(stdout, "%c[%d;%d;%dm", 0x1B, 0, 7 + 30, 0 + 40);
-    const char *last_path = rindex(msg, '/');
+    const char *last_path = strrchr(msg, '/');
     if(!last_path)
         return;
 
@@ -1150,7 +1163,11 @@ void MiddleWareImpl::write(const char *path, const char *args, va_list va)
     if(success)
         handleMsg(buffer);
     else
-        warnx("Failed to write message to '%s'", path);
+    {
+//        warnx("Failed to write message to '%s'", path);
+        printf("Failed to write message to '%s'", path);
+        exit(1);
+    }
 }
 
 void MiddleWareImpl::warnMemoryLeaks(void)
