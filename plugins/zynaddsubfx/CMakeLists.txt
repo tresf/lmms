@@ -7,7 +7,7 @@ ENDIF(LMMS_BUILD_WIN32)
 # ADD_DEFINITIONS("-Doverride")   removed because removed overrides statements
 
 # build ZynAddSubFX with full optimizations
-SET(CMAKE_CXX_FLAGS " -O2 -fexceptions -fPIC -Wno-write-strings -Wno-deprecated-declarations -std=c++0x ")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -fexceptions -Wno-write-strings -Wno-deprecated-declarations -std=c++0x ")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fexceptions")
 
 
@@ -125,7 +125,7 @@ SET(zynaddsubfx_core_SRCS
 
 
 ADD_LIBRARY(ZynAddSubFxCore SHARED LocalZynAddSubFx.cpp ${zynaddsubfx_core_SRCS})
-TARGET_LINK_LIBRARIES(ZynAddSubFxCore zynaddsubfx_gui zynaddsubfx_nio rtosc rtosc-cpp ${FFTW3F_LIBRARIES} ${QT_LIBRARIES} -lpthread -lz -llo -lm )
+TARGET_LINK_LIBRARIES(ZynAddSubFxCore zynaddsubfx_gui zynaddsubfx_nio rtosc-cpp rtosc    ${FFTW3F_LIBRARIES} ${QT_LIBRARIES} -lpthread -lz -llo -lm )
 IF(QT5)
 TARGET_LINK_LIBRARIES(ZynAddSubFxCore Qt5::Widgets Qt5::Xml)
 ENDIF()
@@ -159,7 +159,7 @@ TARGET_LINK_LIBRARIES(RemoteZynAddSubFx zynaddsubfx_gui zynaddsubfx_nio ZynAddSu
 
 # link Qt libraries when on win32
 IF(LMMS_BUILD_WIN32)
-        TARGET_LINK_LIBRARIES(RemoteZynAddSubFx ${QT_LIBRARIES} -ldl )
+        TARGET_LINK_LIBRARIES(RemoteZynAddSubFx ${QT_LIBRARIES}  )
 ENDIF(LMMS_BUILD_WIN32)
 
 # FLTK needs X

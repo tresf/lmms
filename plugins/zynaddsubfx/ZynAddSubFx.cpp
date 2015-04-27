@@ -426,14 +426,19 @@ GEN_CC_SLOT(updateFmGain,C_fmamp,m_fmGainModel);
 GEN_CC_SLOT(updateResCenterFreq,C_resonance_center,m_resCenterFreqModel);
 GEN_CC_SLOT(updateResBandwidth,C_resonance_bandwidth,m_resBandwidthModel);
 
-
-
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 void ZynAddSubFxInstrument::initPlugin()
 {
 	while( m_isPlaying )
 	{
-		usleep(20);
+#ifdef WIN32
+        Sleep(20);
+#else
+        usleep(20);
+#endif
 	}
 	m_isLoading = true;
 	m_pluginMutex.lock();

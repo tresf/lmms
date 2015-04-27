@@ -6,11 +6,13 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Check_Button.H>
 #include <string>
+#include <cstring>
 
 #include "common.H"
 
 class Bank;
 class BankView;
+class BankSlot;
 class Fl_Light_Button;
 
 class BankList : public Fl_Osc_Choice
@@ -83,7 +85,7 @@ class BankView: public Fl_Group, public Fl_Osc_Widget
         void refresh(void);
     private:
         BankViewControls *bvc;
-        BankSlot *slots[160];
+        BankSlot *bankSlots[160];
 
         Fl_Osc_Interface *osc;
         std::string loc;

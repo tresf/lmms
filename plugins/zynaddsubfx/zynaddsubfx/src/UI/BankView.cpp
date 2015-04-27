@@ -204,7 +204,7 @@ void BankViewControls::mode(int m)
 
 
 BankView::BankView(int x,int y, int w, int h, const char *label)
-    :Fl_Group(x,y,w,h,label), bvc(NULL), slots{0}, osc(0),
+    :Fl_Group(x,y,w,h,label), bvc(NULL), bankSlots{0}, osc(0),
     loc(""), nselected(-1), npart(0), cbwig_(0)
 {}
 
@@ -237,14 +237,14 @@ void BankView::init(Fl_Osc_Interface *osc_, BankViewControls *bvc_, int *npart_)
     //Place All Slots
     for(int i=0; i<5; ++i)
         for(int j=0; j<32; ++j)
-            slots[i*32 + j] =
+            bankSlots[i*32 + j] =
                 new BankSlot(X + i*width, Y + j*height, width, height);
 
     end();
 
     //Initialize callbacks
     for(int i=0; i<160; ++i)
-        slots[i]->init(i, this);
+        bankSlots[i]->init(i, this);
 
     //Request Values
     for(int i=0; i<160; ++i)
@@ -264,7 +264,7 @@ void BankView::init(Fl_Osc_Interface *osc_, BankViewControls *bvc_, int *npart_)
  */
 void BankView::react(int event, int nslot)
 {
-    BankSlot &slot = *slots[nslot];
+    BankSlot &slot = *bankSlots[nslot];
     const bool isempty = slot.empty();
     const int  mode    = bvc->mode();
 
@@ -332,7 +332,7 @@ void BankView::OSC_raw(const char *msg)
     const char *fname = rtosc_argument(msg,2).s;
 
     if(0 <= nslot && nslot < 160)
-        slots[nslot]->update(name, fname);
+        bankSlots[nslot]->update(name, fname);
 }
         
 void BankView::cbwig(Fl_Widget *w)
