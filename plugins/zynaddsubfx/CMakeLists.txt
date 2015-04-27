@@ -7,7 +7,7 @@ ENDIF(LMMS_BUILD_WIN32)
 # ADD_DEFINITIONS("-Doverride")   removed because removed overrides statements
 
 # build ZynAddSubFX with full optimizations
-SET(CMAKE_CXX_FLAGS " -O2 -fexceptions -Wno-write-strings -Wno-deprecated-declarations -std=c++0x ")
+SET(CMAKE_CXX_FLAGS " -O2 -fexceptions -fPIC -Wno-write-strings -Wno-deprecated-declarations -std=c++0x ")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fexceptions")
 
 
