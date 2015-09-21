@@ -25,17 +25,18 @@ IF(LMMS_BUILD_MSYS)
 	SET(CMAKE_C_USE_RESPONSE_FILE_FOR_INCLUDES   OFF)
 	SET(CMAKE_CXX_USE_RESPONSE_FILE_FOR_INCLUDES OFF)
 
-	# FIXME:  There should be a cleaner way to do this
-	# Allows "Debug" msys builds to link against Qt "Release" libraries
+	# Variable to assist override Qt debug libraries with release versions
+	SET(QT_OVERRIDE_LIBRARIES
+		optimized;${MINGW_PREFIX}/bin/QtGui4.dll;
+		optimized;${MINGW_PREFIX}/bin/QtCore4.dll;
+		optimized;${MINGW_PREFIX}/bin/QtXml4.dll;
+		debug;${MINGW_PREFIX}/bin/QtGui4.dll;
+		debug;${MINGW_PREFIX}/bin/QtCore4.dll;
+		debug;${MINGW_PREFIX}/bin/QtXml4.dll;
+	)
 	IF(LMMS_BUILD_MSYS AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-		SET(QT_LIBRARIES
-			optimized;${MINGW_PREFIX}/bin/QtGui4.dll;
-			optimized;${MINGW_PREFIX}/bin/QtCore4.dll;
-			optimized;${MINGW_PREFIX}/bin/QtXml4.dll;
-			debug;${MINGW_PREFIX}/bin/QtGui4.dll;
-			debug;${MINGW_PREFIX}/bin/QtCore4.dll;
-			debug;${MINGW_PREFIX}/bin/QtXml4.dll;
-		)
+		# Override Qt debug libraries with release versions
+		SET(QT_LIBRARIES "${QT_OVERRIDE_LIBRARIES}")
 	ENDIF()
 # Linux mingw requires explicitly defined tools to prevent clash with native system tools
 ELSE()
