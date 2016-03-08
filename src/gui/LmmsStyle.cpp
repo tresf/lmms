@@ -29,7 +29,6 @@
 #include <QFrame>
 #include <QPainter>
 #include <QPixmapCache>
-#include <QStyleFactory>
 #include <QStyleOption>
 
 #include "LmmsStyle.h"
@@ -133,12 +132,6 @@ LmmsStyle::LmmsStyle() :
 	qApp->setStyleSheet( file.readAll() );
 
 	if( s_palette != NULL ) { qApp->setPalette( *s_palette ); }
-
-#if QT_VERSION >= 0x050000
-	setBaseStyle( QStyleFactory::create( "Fusion" ) );
-#else
-	setBaseStyle( QStyleFactory::create( "Plastique" ) );
-#endif
 }
 
 
