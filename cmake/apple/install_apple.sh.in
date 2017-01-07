@@ -24,17 +24,28 @@ MSG_COLOR='\x1B[1;36m'
 COLOR_RESET='\x1B[0m'
 echo -e "$MSG_COLOR\n\nCreating App Bundle \"$APP\"...$COLOR_RESET"
 
-# Locate macdeployqt, assume homebrew & Qt5
-which macdeployqt > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-  brew --prefix qt55 > /dev/null 2>&1
-  if [ $? -eq 0 ]; then
-    # Prefer Qt 5.5 (QTBUG-53533)
-    export PATH=$PATH:$(brew --prefix qt55)/bin
-  else
-    # Fallback Qt 5.6+
-  	export PATH=$PATH:$(brew --prefix qt5)/bin
-  fi
+# Explicitly use qt55 macdeployqt if available
+brew --prefix qt5  > /dev/null 2>&1 && brew --prefix qt55 > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+  # Capture exact library locations for qt5, qt55
+  prefix5=$(brew --prefix qt5)
+  prefix55=$(brew --prefix qt55)
+  # Force english locale for reliable parsing
+  export LANG=C
+  # Get exact Qt versions installed, e.g. "5.5.1", "5.7.0", etc.
+  ver5=$prefix5$($prefix5/bin/qmake --version |awk -F' ' 'NR==2{print $4}')
+  ver55=$prefix55$($prefix55/bin/qmake --version |awk -F' ' 'NR==2{print $4}')
+  # Copy and re-link qt55 macdeployqt tool
+  echo "Copying $prefix55/bin/macdeployqt to @CMAKE_BINARY_DIR@..."
+  \cp "$prefix55/bin/macdeployqt" "@CMAKE_BINARY_DIR@"
+  chmod u+w "@CMAKE_BINARY_DIR@/macdeployqt"
+  install_name_tool -change "$ver55/lib/QtGui.framework/Versions/5/QtGui" "$ver5/lib/QtGui.framework/Versions/5/QtGui" "@CMAKE_BINARY_DIR@/macdeployqt"
+  install_name_tool -change "$ver55/lib/QtCore.framework/Versions/5/QtCore" "$ver5/lib/QtCore.framework/Versions/5/QtCore" "@CMAKE_BINARY_DIR@/macdeployqt"
+  echo "Adding @CMAKE_BINARY_DIR@ to PATH for macdeployqt workaround"
+  export PATH=@CMAKE_BINARY_DIR@:$PATH
+else
+  # Fallback qt5
+  brew --prefix qt5 && export PATH=$(brew --prefix qt5)/bin:$PATH > /dev/null 2>&1
 fi
  
 # MacPorts only - check for u+w permissions on libreadline
