@@ -2,7 +2,7 @@ Linux MultiMedia Studio
 =======================
 [![Build Status](https://travis-ci.org/LMMS/lmms.png)](https://travis-ci.org/LMMS/lmms)
 
-What is LMMS?
+What is LMMS
 --------------
 
 LMMS is a free cross-platform alternative to commercial programs like FL Studio (R), which allow you to produce music with your computer. This includes the creation of melodies and beats, the synthesis and mixing of sounds, and arranging of samples. You can have fun with your MIDI-keyboard and much more; all in a user-friendly and modern interface.
