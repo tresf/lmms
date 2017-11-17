@@ -1329,6 +1329,86 @@ void DataFile::upgrade_1_3_0()
 						};
 						iterate_ladspa_ports(effect, fn);
 					}
+					// Upgrade C* Eq to C* Eq10
+					if( attribute.attribute( "name" ) == "plugin" &&
+							attribute.attribute( "value" ) == "Eq" )
+					{
+						attribute.setAttribute( "value", "Eq10" );
+						// Head back up the DOM to upgrade ports
+						QDomNodeList ladspacontrols = effect.elementsByTagName( "ladspacontrols" );
+						for( int m = 0; !ladspacontrols.item( m ).isNull(); ++m )
+						{
+							QDomElement ladspacontrol = ladspacontrols.item( m ).toElement();
+							for( QDomElement port = ladspacontrol.firstChild().toElement();
+								!port.isNull(); port = port.nextSibling().toElement() )
+							{
+								if ( port.tagName() == "port01" )
+									port.setTagName( "port00" );
+								else if( port.tagName() == "port02" )
+									port.setTagName("port01" );
+								else if( port.tagName() == "port03")
+									port.setTagName( "port02" );
+								else if( port.tagName() == "port04" )
+									port.setTagName( "port03" );
+								else if ( port.tagName() == "port05" )
+									port.setTagName( "port04" );
+								else if( port.tagName() == "port06" )
+									port.setTagName("port05" );
+								else if( port.tagName() == "port07")
+									port.setTagName( "port06" );
+								else if( port.tagName() == "port08" )
+									port.setTagName( "port07" );
+								else if( port.tagName() == "port09")
+									port.setTagName( "port08" );
+								else if( port.tagName() == "port010" )
+									port.setTagName( "port09" );
+								if ( port.tagName() == "port11" )
+									port.setTagName( "port10" );
+								else if( port.tagName() == "port12" )
+									port.setTagName("port11" );
+								else if( port.tagName() == "port13")
+									port.setTagName( "port12" );
+								else if( port.tagName() == "port14" )
+									port.setTagName( "port13" );
+								else if ( port.tagName() == "port15" )
+									port.setTagName( "port14" );
+								else if( port.tagName() == "port16" )
+									port.setTagName("port15" );
+								else if( port.tagName() == "port17")
+									port.setTagName( "port16" );
+								else if( port.tagName() == "port18" )
+									port.setTagName( "port17" );
+								else if( port.tagName() == "port19")
+									port.setTagName( "port18" );
+								else if( port.tagName() == "port110" )
+									port.setTagName( "port19" );
+							}
+						}
+					}
+					// Upgrade C* Plate2x2 to PlateX2
+					if( attribute.attribute( "name" ) == "plugin" &&
+							attribute.attribute( "value" ) == "Plate2x2" )
+					{
+						attribute.setAttribute( "value", "PlateX2" );
+						// Head back up the DOM to upgrade ports
+						QDomNodeList ladspacontrols = effect.elementsByTagName( "ladspacontrols" );
+						for( int m = 0; !ladspacontrols.item( m ).isNull(); ++m )
+						{
+							QDomElement ladspacontrol = ladspacontrols.item( m ).toElement();
+							for( QDomElement port = ladspacontrol.firstChild().toElement();
+								!port.isNull(); port = port.nextSibling().toElement() )
+							{
+								if ( port.tagName() == "port02" )
+									port.setTagName( "port00" );
+								else if( port.tagName() == "port03" )
+									port.setTagName("port01" );
+								else if( port.tagName() == "port04")
+									port.setTagName( "port02" );
+								else if( port.tagName() == "port05" )
+									port.setTagName( "port03" );
+							}
+						}
+					}
 				}
 			}
 		}
