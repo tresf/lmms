@@ -1409,6 +1409,13 @@ void DataFile::upgrade_1_3_0()
 							}
 						}
 					}
+					// Upgrade C* Clip to C* Saturate
+					if( attribute.attribute( "name" ) == "plugin" &&
+							attribute.attribute( "value" ) == "Clip" )
+					{
+						attribute.setAttribute( "value", "Saturate" );
+						// FIXME: Ports conveniently map, but the volume is too quiet
+					}
 				}
 			}
 		}
