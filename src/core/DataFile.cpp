@@ -1401,8 +1401,13 @@ void DataFile::upgrade_1_3_0()
 								if ( port.tagName() == "port02" )
 									port.setTagName( "port00" );
 								else if( port.tagName() == "port03" )
-									port.setTagName("port01" );
-								else if( port.tagName() == "port04")
+								{
+									// tail 0.749 is now 1.0
+									const float value = port.attribute("data", "0.3745").toFloat();
+									port.setAttribute( "data", value / 0.749f);
+									port.setTagName( "port01" );
+								}
+								else if( port.tagName() == "port04" )
 									port.setTagName( "port02" );
 								else if( port.tagName() == "port05" )
 									port.setTagName( "port03" );
