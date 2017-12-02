@@ -40,3 +40,6 @@
 [submodule "plugins/carlabase/carla"]
 	path = plugins/carlabase/carla
 	url = https://github.com/falktx/carla
+[submodule "plugins/LadspaEffect/caps/caps-lv2"]
+	path = plugins/LadspaEffect/caps/caps-lv2
+	url = https://github.com/moddevices/caps-lv2.git
