@@ -15,5 +15,5 @@ install:
   - ps: scoop install https://gist.github.com/tresf/537ed72730a8b18341a35eaa3759e36f/raw/5ab74152d2c2b30fb762a22118ef511b004abea9/fftw.json --arch $env:PLATFORM 
 build_script:
   - cmd: REM CMAKE FROM POWERSHELL IS PROBLEMATIC
-  - cmd: cmake %APPVEYOR_BUILD_FOLDER%
-  - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%
+  - cmd: cd %APPVEYOR_BUILD_FOLDER% && cmake .
+  - cmd: cd %APPVEYOR_BUILD_FOLDER% && cmake --build
