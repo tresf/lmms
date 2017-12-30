@@ -10,17 +10,20 @@
 
 # qtcreator + msvc
 IF(MSVC)
+	MESSAGE("-- Found MSVC version ${MSVC_VERSION}")
 	# Assume that .cpp file associations were registered during install
 	GET_FILENAME_COMPONENT(QT_BIN [HKEY_CURRENT_USER\\Software\\Classes\\Applications\\QtProject.QtCreator.cpp\\shell\\Open\\Command] PATH)
 	IF(QT_BIN MATCHES "/Tools")
+		MESSAGE("-- Found QtCreator installed ${QT_BIN}")
 		STRING(REPLACE "/Tools" ";" QT_BIN "${QT_BIN}")
 		LIST(GET QT_BIN 0 QT_BIN)
 		FILE(GLOB QT_VERSIONS "${QT_BIN}/5.*")
 		LIST(SORT QT_VERSIONS)
 		LIST(REVERSE QT_VERSIONS)
+		MESSAGE("-- Found Qt Frameworks ${QT_VERSIONS}")
 		LIST(GET QT_VERSIONS 0 QT_VERSION)
 		STRING(REPLACE "//" "/"  QT_VERSION "${QT_VERSION}")
-		MESSAGE("-- MSVC version reported as ${MSVC_VERSION}")
+		MESSAGE("-- Selecting Qt Framework ${QT_VERSION}")
 
 		# Decode the cryptic msvc version information
 		IF(MSVC_VERSION LESS 1900)
@@ -40,9 +43,7 @@ IF(MSVC)
 			SET(QT_PATH "${QT_VERSION}/${MSVC_FOLDER}")
 			SET(QT_MISSING False)
 		ENDIF()
-	ENDIF()
-
-	IF(QT_MISSING)
-		MESSAGE("-- QtCreator does not appear to be installed")
+	ELSE()
+		MESSAGE("-- Could not find QtCreator")
 	ENDIF()
 ENDIF()
