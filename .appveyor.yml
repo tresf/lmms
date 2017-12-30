@@ -16,3 +16,4 @@ install:
 build_script:
   - ps: $ErrorActionPreference = 'SilentlyContinue'; cmake $env:APPVEYOR_BUILD_FOLDER
   - ps: $ErrorActionPreference = 'SilentlyContinue'; cmake --build $env:APPVEYOR_BUILD_FOLDER
+  - ps: cat $env:APPVEYOR_BUILD_FOLDER/CMakeFiles/CMakeOutput.log
