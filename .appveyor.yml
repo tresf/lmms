@@ -1,0 +1,18 @@
+shallow_clone: true
+clone_depth: 1
+platform:
+  - x86
+  - x64
+configuration:
+  - Debug
+image: Visual Studio 2015
+init:
+  - ps: iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
+  - ps: scoop bucket add extras
+install:
+  - ps: scoop install sdl2 cmake pkg-config gzip --arch $env:PLATFORM
+  - ps: scoop install https://gist.githubusercontent.com/tresf/d95ee9c6649a5dfa010e5196ec56cb19/raw/2f9859638a60411b08988af88cd6aae24a7ebbaa/libsndfile.json --arch $env:PLATFORM
+  - ps: scoop install https://gist.github.com/tresf/537ed72730a8b18341a35eaa3759e36f/raw/5ab74152d2c2b30fb762a22118ef511b004abea9/fftw.json --arch $env:PLATFORM 
+build_script:
+  - ps: cmake $env:APPVEYOR_BUILD_FOLDER
+  - ps: cmake --build $env:APPVEYOR_BUILD_FOLDER
