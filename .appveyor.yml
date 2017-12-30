@@ -15,5 +15,5 @@ install:
   - ps: scoop install https://gist.github.com/tresf/537ed72730a8b18341a35eaa3759e36f/raw/5ab74152d2c2b30fb762a22118ef511b004abea9/fftw.json --arch $env:PLATFORM 
 build_script:
   - ps: $ErrorActionPreference = 'SilentlyContinue'; cmake $env:APPVEYOR_BUILD_FOLDER --debug-output --trace-expand -Wdev
-  - ps: cat $env:APPVEYOR_BUILD_FOLDER/CMakeError.log
+  - ps: cat $env:APPVEYOR_BUILD_FOLDER/CMakeFiles/CMakeError.log
   - ps: $ErrorActionPreference = 'SilentlyContinue'; cmake --build $env:APPVEYOR_BUILD_FOLDER --debug-output --trace-expand -Wdev
