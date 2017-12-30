@@ -17,4 +17,4 @@ build_script:
   - ps: $env:CMAKE_PLATFORM="$(if ($env:PLATFORM -eq 'x64') { 'x64' } else { '' })"
   - ps: # Calling cmake from PowerShell has issues, using cmd.exe instead
   - cmd: cd %APPVEYOR_BUILD_FOLDER% && cmake . -DCMAKE_GENERATOR_PLATFORM=%CMAKE_PLATFORM%
-  - cmd: cd %APPVEYOR_BUILD_FOLDER% && cmake --build
+  - cmd: cd %APPVEYOR_BUILD_FOLDER% && cmake --build .
