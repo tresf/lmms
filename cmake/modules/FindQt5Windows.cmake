@@ -14,6 +14,7 @@ IF(MSVC)
 	# Assume that .cpp file associations were registered during install
 	GET_FILENAME_COMPONENT(QT_BIN [HKEY_CURRENT_USER\\Software\\Classes\\Applications\\QtProject.QtCreator.cpp\\shell\\Open\\Command] PATH)
 	IF(QT_BIN MATCHES "/Tools")
+		STRING(REPLACE "//" "/"  QT_BIN "${QT_BIN}")
 		MESSAGE("-- Found QtCreator installed ${QT_BIN}")
 		STRING(REPLACE "/Tools" ";" QT_BIN "${QT_BIN}")
 		LIST(GET QT_BIN 0 QT_BIN)
