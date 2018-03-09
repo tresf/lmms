@@ -70,6 +70,14 @@ PluginFactory::PluginFactory()
 #ifdef PLUGIN_DIR // We may also have received a relative directory via a define
 	addRelativeIfExists(PLUGIN_DIR);
 #endif
+
+#ifdef _MSC_VER
+	#ifdef _DEBUG
+		addRelativeIfExists("../plugins/Debug");
+	#else
+		addRelativeIfExists("../plugins/Release");
+	#endif
+#endif
 	// Or via an environment variable:
 	QString env_path;
 	if (!(env_path = qgetenv("LMMS_PLUGIN_DIR")).isEmpty())
