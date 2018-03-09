@@ -64,8 +64,10 @@ ConfigManager::ConfigManager() :
 	// If we're in development (lmms is not installed) let's get the source and
 	// binary directories by reading the CMake Cache
 	QDir appPath = qApp->applicationDirPath();
-	// If in tests, get parent directory
-	if (appPath.dirName() == "tests") {
+	// If in tests, or MSVC get parent directory
+	if (appPath.dirName() == "tests" ||
+			appPath.dirName() == "Debug" ||
+			appPath.dirName() == "Release") {
 		appPath.cdUp();
 	}
 	QFile cmakeCache(appPath.absoluteFilePath("CMakeCache.txt"));
