@@ -5,15 +5,19 @@ echo Recoloring vector icon...
 case "$1" in
 	"-r" ) # Release
 	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' icon.svg > recolored.svg
+	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' splash.svg > splash-recolored.svg
 	;;
 	"-b" | "-rc" ) # Beta/Release Candidate
 	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' icon.svg > recolored.svg
+	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' splash.svg > splash-recolored.svg
 	;;
 	"-c" | "-n" ) # Canary/Nightly
 	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' icon.svg > recolored.svg
+	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' splash.svg > splash-recolored.svg
 	;;
 	* ) # No type specified, leave it be
 	sed '' icon.svg > recolored.svg
+	sed '' splash.svg > splash-recolored.svg
 	;;
 esac
 
@@ -41,8 +45,11 @@ cp icon_512x512.png lmms.iconset/icon_256x256@2x.png
 echo Generating macOS .icns from raster images...
 iconutil -c icns -o icon.icns lmms.iconset
 
+echo Generating raster image for splash screen...
+rsvg-convert -w 680 -h 573 -o "../../data/themes/default/splash.png" splash-recolored.svg
+
 # Clean up images
 echo Cleaning up temporary images...
-rm -f recolored.svg
+rm -f *recolored.svg
 rm -f icon_*.png
 rm -r lmms.iconset
