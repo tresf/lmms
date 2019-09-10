@@ -38,15 +38,15 @@ rsvg-convert -w 32 -h 32 recolored-icon.svg -o icon_32x32.png
 rsvg-convert -w 16 -h 16 recolored-icon.svg -o icon_16x16.png
 
 echo Generating raster image for splash screen...
-rsvg-convert -w 680 -h 573 recolored-splash.svg -o "../../data/themes/default/splash.png"
+rsvg-convert -w 680 -h 573 recolored-splash.svg -o ../../data/themes/default/splash.png
 
 echo Generating raster images for NSIS installer...
-rsvg-convert -w 192 -h 192 recolored-logo-small.svg -o ../nsis/assets/SmallLogo.png
-rsvg-convert -w 600 -h 600 recolored-logo.svg -o ../nsis/assets/Logo.png
+rsvg-convert -w 192 -h 192 recolored-logo-small.svg -o assets/SmallLogo.png
+rsvg-convert -w 600 -h 600 recolored-logo.svg -o assets/Logo.png
 
 # Generate Windows .ico icon
 echo Generating Windows .ico from raster images...
-convert icon_16x16.png icon_32x32.png icon_48x48.png icon_64x64.png icon_128x128.png -background transparent ../nsis/icon.ico
+convert icon_16x16.png icon_32x32.png icon_48x48.png icon_64x64.png icon_128x128.png -background transparent icon.ico
 
 # Clean up images
 echo Cleaning up temporary images...
