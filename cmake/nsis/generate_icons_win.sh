@@ -4,28 +4,28 @@
 echo Recoloring vector images...
 case "$1" in
 	"-r" ) # Release
-	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' icon.svg > recolored-icon.svg
-	sed 's/#780116/#249a56/g' logo-small.svg > recolored-logo-small.svg
-	sed 's/#780116/#249a56/g' logo.svg > recolored-logo.svg
-	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' splash.svg > recolored-splash.svg
+	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' ../branding/icon.svg > recolored-icon.svg
+	sed 's/#780116/#249a56/g' ../branding/logo-small.svg > recolored-logo-small.svg
+	sed 's/#780116/#249a56/g' ../branding/logo.svg > recolored-logo.svg
+	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' ../branding/splash.svg > recolored-splash.svg
 	;;
 	"-b" | "-rc" ) # Beta/Release Candidate
-	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' icon.svg > recolored-icon.svg
-	sed 's/#780116/#0267c1/g' logo-small.svg > recolored-logo-small.svg
-	sed 's/#780116/#0267c1/g' logo.svg > recolored-logo.svg
-	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' splash.svg > recolored-splash.svg
+	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' ../branding/icon.svg > recolored-icon.svg
+	sed 's/#780116/#0267c1/g' logo-small.svg > ../branding/recolored-logo-small.svg
+	sed 's/#780116/#0267c1/g' logo.svg > ../branding/recolored-logo.svg
+	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' ../branding/splash.svg > recolored-splash.svg
 	;;
 	"-c" | "-n" ) # Canary/Nightly
-	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' icon.svg > recolored-icon.svg
-	sed 's/#780116/#ffa40f/g' logo-small.svg > recolored-logo-small.svg
-	sed 's/#780116/#ffa40f/g' logo.svg > recolored-logo.svg
-	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' splash.svg > recolored-splash.svg
+	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' ../branding/icon.svg > recolored-icon.svg
+	sed 's/#780116/#ffa40f/g' ../branding/logo-small.svg > recolored-logo-small.svg
+	sed 's/#780116/#ffa40f/g' ../branding/logo.svg > recolored-logo.svg
+	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' ../branding/splash.svg > recolored-splash.svg
 	;;
 	* ) # No type specified, leave it be
-	sed '' icon.svg > recolored-icon.svg
-	sed '' logo-small.svg > recolored-logo-small.svg
-	sed '' logo.svg > recolored-logo.svg
-	sed '' splash.svg > recolored-splash.svg
+	sed '' ../branding/icon.svg > recolored-icon.svg
+	sed '' ../branding/logo-small.svg > recolored-logo-small.svg
+	sed '' ../branding/logo.svg > recolored-logo.svg
+	sed '' ../branding/splash.svg > recolored-splash.svg
 	;;
 esac
 
