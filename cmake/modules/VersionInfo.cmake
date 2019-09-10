@@ -1,5 +1,6 @@
 FIND_PACKAGE(Git)
 IF(GIT_FOUND AND NOT FORCE_VERSION)
+	SET(TRUST_VERSION TRUE) # Used for build type color-coding
 	# Look for git tag information (e.g. Tagged: "v1.0.0", Non-tagged: "v1.0.0-123-a1b2c3d")
 	EXECUTE_PROCESS(
 		COMMAND "${GIT_EXECUTABLE}" describe --tags --match v[0-9].[0-9].[0-9]*
