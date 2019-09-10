@@ -1,3 +1,5 @@
+CONFIGURE_FILE("generate_icons_linux.sh.in" "generate_icons_linux.sh" @ONLY)
+
 INSTALL(DIRECTORY icons/                DESTINATION "${DATA_DIR}/icons/hicolor")
 INSTALL(FILES lmms.desktop              DESTINATION "${DATA_DIR}/applications")
 INSTALL(FILES lmms.xml                  DESTINATION "${DATA_DIR}/mime/packages")
