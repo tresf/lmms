@@ -4,20 +4,20 @@
 echo Recoloring vector icon...
 case "$1" in
 	"-r" ) # Release
-	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' icon.svg > recolored-icon.svg
-	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' splash.svg > recolored-splash.svg
+	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' ../branding/icon.svg > recolored-icon.svg
+	sed 's/#780116/#249a56/g; s/#c51306/#50d99b/g' ../branding/splash.svg > recolored-splash.svg
 	;;
 	"-b" | "-rc" ) # Beta/Release Candidate
-	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' icon.svg > recolored-icon.svg
-	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' splash.svg > recolored-splash.svg
+	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' ../branding/icon.svg > recolored-icon.svg
+	sed 's/#780116/#0267c1/g; s/#c51306/#09a9d9/g' ../branding/splash.svg > recolored-splash.svg
 	;;
 	"-c" | "-n" ) # Canary/Nightly
-	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' icon.svg > recolored-icon.svg
-	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' splash.svg > recolored-splash.svg
+	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' ../branding/icon.svg > recolored-icon.svg
+	sed 's/#780116/#ffa40f/g; s/#c51306/#fad200/g' ../branding/splash.svg > recolored-splash.svg
 	;;
 	* ) # No type specified, leave it be
-	sed '' icon.svg > recolored-icon.svg
-	sed '' splash.svg > recolored-splash.svg
+	sed '' ../branding/icon.svg > recolored-icon.svg
+	sed '' ../branding/splash.svg > recolored-splash.svg
 	;;
 esac
 
