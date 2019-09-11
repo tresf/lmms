@@ -31,7 +31,6 @@ if [ -n "@LMMS_BUILD_APPLE@" ]; then
 	LOCATION="lmms.iconset/icon_RESxRES.png"
 	HIRES="lmms.iconset/icon_RESxRES@2x.png"
 	mkdir recolored/lmms.iconset
-# shellcheck disable=SC2157
 elif [ -n "@LMMS_BUILD_WIN32@" ]; then
 	SIZES=(16 32 48 64 128)
 	LOCATION="icon_RESxRES.png"
@@ -79,7 +78,6 @@ rsvg-convert recolored-splash.svg -w 680 -h 573 -o "../data/themes/default/splas
 if [ -n "@LMMS_BUILD_APPLE@" ]; then
 	echo "Generating macOS .icns from raster images..."
 	iconutil -c icns -o ../apple/icon.icns recolored/lmms.iconset
-# shellcheck disable=SC2157
 elif [ -n "@LMMS_BUILD_WIN32@" ]; then
 	echo "Recoloring NSIS-specific vector images..."
 	sed "$COLOR_PARAMS" logo.svg > recolored/logo.svg
