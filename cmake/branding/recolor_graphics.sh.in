@@ -1,0 +1,96 @@
+#!/bin/bash
+
+echo "Detecting build type..."
+readarray -d - -t TAGS_LIST <<< "@FORCE_VERSION@" # Splits FORCE_VERSION into an array called TAGS_LIST with - as the delimiter
+
+if [ ${#TAGS_LIST[@]} -eq "1" ]; then # If there were no dashes, we should be stable (e.g. 1.2.0 has no dashes)
+	BUILD_TYPE="RELEASE"
+	COLOR_PARAMS='s/#780116/#249a56/g; s/#c51306/#50d99b/g'
+else
+	case ${TAGS_LIST[1]} in # If there are dashes, let's see what is after them
+		b* | rc* ) # Beta/Release Candidate
+		BUILD_TYPE="BETA"
+		COLOR_PARAMS='s/#780116/#0267c1/g; s/#c51306/#09a9d9/g'
+		;;
+		c* | n* ) # Canary/Nightly
+		BUILD_TYPE="NIGHTLY"
+		COLOR_PARAMS='s/#780116/#ffa40f/g; s/#c51306/#fad200/g'
+		;;
+		* ) # No build type detected
+		BUILD_TYPE="UNKNOWN"
+		COLOR_PARAMS=''
+		;;
+	esac
+fi
+
+echo "$BUILD_TYPE build type detected!"
+
+if [ -n "@LMMS_BUILD_APPLE@" ]; then
+	SIZES=(16 32 64 128 256 512)
+	LOCATION="lmms.iconset/icon_RESxRES.png"
+	HIRES="lmms.iconset/icon_RESxRES@2x.png"
+	mkdir recolored/lmms.iconset
+elif [ -n "@LMMS_BUILD_WIN32@" ]; then
+	SIZES=(16 32 48 64 128)
+	LOCATION="icon_RESxRES.png"
+	HIRES='' # No Hi-resolution duplicates
+else # Linux
+	SIZES=(16 24 32 48 64 96 128)
+	LOCATION="icons/RESxRES/apps/lmms.png"
+	HIRES="icons/RESxRES@2/apps/lmms.png"
+	# Linux is weird, so might as well get this part done ahead of time
+	for RES in $SIZES # make the folders ahead of time since rsvg-convert won't
+	do
+		mkdir -p recolored/icons/${RES}x${RES}/apps
+		mkdir -p recolored/icons/${RES}x${RES}@2/apps
+	done
+	mkdir -p recolored/icons/scalable/apps
+	cp recolored/icon.svg recolored/icons/scalable/apps/lmms.svg
+fi
+
+mkdir recolored
+
+echo "Recoloring universal vector images..."
+sed "${COLOR_PARAMS}" icon.svg > recolored/icon.svg
+sed "${COLOR_PARAMS}" splash.svg > recolored/splash.svg
+
+echo "Generating raster images for icon..."
+for RES in ${SIZES[@]}
+do
+	rsvg-convert recolored/icon.svg -w $RES -h $RES -o "recolored/${LOCATION//RES/$RES}"
+done
+
+# If Hi-resolution is enabled, generate 2x duplicates in the correct locations
+if [ $HIRES ]; then
+	echo "Generating high-resolution raster images for icon..."
+	for RES in ${SIZES[@]}
+	do
+		rsvg-convert recolored/icon.svg -w $((RES * 2)) -h $((RES * 2)) -o "recolored/${HIRES//RES/$RES}"
+	done
+fi
+
+echo "Generating raster images for splash screen..." # Currently this just directly overwrites the defaul theme
+rsvg-convert recolored-splash.svg -w 680 -h 573 -o "../data/themes/default/splash.png"
+
+# System-specific
+if [ -n "@LMMS_BUILD_APPLE@" ]; then
+	echo "Generating macOS .icns from raster images..."
+	iconutil -c icns -o ../apple/icon.icns recolored/lmms.iconset
+elif [ true ]; then
+	echo "Recoloring NSIS-specific vector images..."
+	sed "$COLOR_PARAMS" logo.svg > recolored/logo.svg
+	sed "$COLOR_PARAMS" logo-small.svg > recolored/logo-small.svg
+	echo "Generating raster images for NSIS installer..."
+	rsvg-convert -w 192 -h 192 recolored/logo-small.svg -o ../nsis/assets/SmallLogo.png
+	rsvg-convert -w 600 -h 600 recolored/logo.svg -o ../nsis/assets/Logo.png
+	echo "Generating Windows .ico from raster images..."
+	convert recolored/icon_16x16.png recolored/icon_32x32.png recolored/icon_48x48.png recolored/icon_64x64.png recolored/icon_128x128.png -background transparent ../nsis/icon.ico
+else # Linux
+	echo "Replacing old icons with recolored ones..."
+	cp -r -f recolored/icons ../linux
+fi
+
+echo "Cleaning up temporary files..."
+rm -r -f recolored
+
+echo "Recoloring based on build type completed."
