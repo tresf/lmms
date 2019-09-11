@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2193
 
 echo "Detecting build type..."
 readarray -d - -t TAGS_LIST <<< "@FORCE_VERSION@" # Splits FORCE_VERSION into an array called TAGS_LIST with - as the delimiter
