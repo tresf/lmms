@@ -1,5 +1,4 @@
 #!/bin/bash
-# shellcheck disable=SC2193
 
 echo "Detecting build type..."
 readarray -d - -t TAGS_LIST <<< "@FORCE_VERSION@" # Splits FORCE_VERSION into an array called TAGS_LIST with - as the delimiter
@@ -26,11 +25,13 @@ fi
 
 echo "$BUILD_TYPE build type detected!"
 
+# shellcheck disable=SC2157
 if [ -n "@LMMS_BUILD_APPLE@" ]; then
 	SIZES=(16 32 64 128 256 512)
 	LOCATION="lmms.iconset/icon_RESxRES.png"
 	HIRES="lmms.iconset/icon_RESxRES@2x.png"
 	mkdir recolored/lmms.iconset
+# shellcheck disable=SC2157
 elif [ -n "@LMMS_BUILD_WIN32@" ]; then
 	SIZES=(16 32 48 64 128)
 	LOCATION="icon_RESxRES.png"
@@ -40,7 +41,7 @@ else # Linux
 	LOCATION="icons/RESxRES/apps/lmms.png"
 	HIRES="icons/RESxRES@2/apps/lmms.png"
 	# Linux is weird, so might as well get this part done ahead of time
-	for RES in ${SIZES[@]} # make the folders ahead of time since rsvg-convert won't
+	for RES in "${SIZES[@]}" # make the folders ahead of time since rsvg-convert won't
 	do
 		mkdir -p "recolored/icons/${RES}x${RES}/apps"
 		mkdir -p "recolored/icons/${RES}x${RES}@2/apps"
@@ -74,9 +75,11 @@ echo "Generating raster images for splash screen..." # Currently this just direc
 rsvg-convert recolored-splash.svg -w 680 -h 573 -o "../data/themes/default/splash.png"
 
 # System-specific
+# shellcheck disable=SC2157
 if [ -n "@LMMS_BUILD_APPLE@" ]; then
 	echo "Generating macOS .icns from raster images..."
 	iconutil -c icns -o ../apple/icon.icns recolored/lmms.iconset
+# shellcheck disable=SC2157
 elif [ -n "@LMMS_BUILD_WIN32@" ]; then
 	echo "Recoloring NSIS-specific vector images..."
 	sed "$COLOR_PARAMS" logo.svg > recolored/logo.svg
