@@ -129,6 +129,7 @@ done
 montage+=" ../png/windows-tile_48x48@4.png"
 montage+=" ../data/themes/default/splash.png"
 outfile="$HOME/Desktop/${LMMS_RELEASE_TYPE}_preview.png"
+# shellcheck disable=SC2086
 montage $montage -mode Concatenate -background transparent -tile "${#ICON_SIZES[@]}x" "$outfile"
 convert "$outfile" -trim +repage "$outfile"
 
