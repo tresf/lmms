@@ -9,19 +9,33 @@ LINUX_SIZES=(16 24 32 48 64 96 128)
 # Fallback svg to use if an exact match can't be found
 FALLBACK_SIZE=64
 
+# CMake variables
+PROJECT_NAME="@PROJECT_NAME@"
+VERSION="@VERSION@"
+LMMS_RELEASE_TYPE="@LMMS_RELEASE_TYPE@"
+LMMS_BUILD_APPLE="@LMMS_BUILD_APPLE@"
+LMMS_BUILD_WIN32="@LMMS_BUILD_WIN32@"
+
 # File patterns for icons
 MULTIRES_PATTERNS=("icon" "project")
 
-pushd $DIR >/dev/null
+pushd "$DIR" >/dev/null
 
-REGEX_FIND=("#27ab5f" "#249a56" "#34d07b") # green branding
+# HTML color codes to search for
+HTML_GREEN=("#27ab5f" "#249a56" "#34d07b")
+HTML_BLUE=("#09a9d9" "#0267c1" "#35a9d0")
+HTML_YELLOW=("#fad200" "#ffa40f" "#ffe14d")
+HTML_RED=("#780116" "#c51306" "#d03535")
+HTML_PURPLE=("#5e53b6" "#4d41a4" "#7b6ddd")
 
-echo "Creating LMMS_RELEASE_TYPE=\"@LMMS_RELEASE_TYPE@\" resources for \"@PROJECT_NAME@ @VERSION@\"..."
-case "@LMMS_RELEASE_TYPE@" in
-	Stable) REGEX_REPLACE=("#27ab5f" "#249a56" "#34d07b");;
-	Beta) REGEX_REPLACE=("#09a9d9" "#0267c1" "#35a9d0");;
-	Nightly) REGEX_REPLACE=("#fad200" "#ffa40f" "#ffe14d");;
-	*) REGEX_REPLACE=("#780116" "#c51306" "#d03535");;
+REGEX_FIND=("${HTML_GREEN[@]}")
+
+echo "Creating LMMS_RELEASE_TYPE=\"$LMMS_RELEASE_TYPE\" resources for \"$PROJECT_NAME $VERSION\"..."
+case "$LMMS_RELEASE_TYPE" in
+	Stable) REGEX_REPLACE=("${HTML_GREEN[@]}");;
+	Beta) REGEX_REPLACE=("${HTML_BLUE[@]}");;
+	Nightly) REGEX_REPLACE=("${HTML_YELLOW[@]}");;
+	*) REGEX_REPLACE=("${HTML_PURPLE[@]}");;
 esac
 
 # Prepare sed colorize expression
@@ -31,19 +45,18 @@ for i in "${!REGEX_FIND[@]}"; do
 	# FIXME: Should we quietly exit if REGEX_FIND == REGEX_REPLACE?
 done
 
-# shellcheck disable=SC2157
-if [ -n "@LMMS_BUILD_APPLE@" ]; then
-	FORMAT="icns"
-	SIZES=("${APPLE_SIZES[@]}")
-	DEST="../apple"
-elif [ -n "@LMMS_BUILD_WIN32@" ]; then
-	FORMAT="ico"
-	SIZES=("${WINDOWS_SIZES[@]}")
-	DEST="../nsis"
+if [ -n "$LMMS_BUILD_APPLE" ]; then
+	ICON_FORMAT="icns"
+	ICON_SIZES=("${APPLE_SIZES[@]}")
+	ICON_DEST="../apple"
+elif [ -n "$LMMS_BUILD_WIN32" ]; then
+	ICON_FORMAT="ico"
+	ICON_SIZES=("${WINDOWS_SIZES[@]}")
+	ICON_DEST="../nsis"
 else
-	FORMAT="all"
-	SIZES=("${LINUX_SIZES[@]}")
-	DEST="../linux"
+	ICON_FORMAT="all"
+	ICON_SIZES=("${LINUX_SIZES[@]}")
+	ICON_DEST="../linux"
 fi
 
 # Process colors in all SVG files, export raster imgages
@@ -55,9 +68,9 @@ for svg in *.svg; do
 	sed -i "" "$REGEX_FULL" "$svg"
 
 	tally=""
-	pngx1="../png/$(echo "$svg"|sed 's/.svg$/.png/g')"
-	pngx2="../png/$(echo "$svg"|sed 's/.svg$/@2.png/g')"
-	pngx4="../png/$(echo "$svg"|sed 's/.svg$/@4.png/g')"
+	pngx1="../png/${svg/%.svg/.png}"
+	pngx2="../png/${svg/%.svg/@2.png}"
+	pngx4="../png/${svg/%.svg/@4.png}"
 	res="$(echo "$svg"|sed -E 's/(.)*_//g' |cut -d 'x' -f1)"
 
 	# Handle the splash screen
@@ -68,7 +81,7 @@ for svg in *.svg; do
 
 	# Export rasterized versions to a folder called /png/
 	mkdir -p "$(dirname $pngx1)"
-	if [ "$res" -eq "$res" 2>/dev/null ]; then # integer
+	if [ "$res" -eq "$res" ] 2>/dev/null; then # integer
 		# Windows UWP tile is always 4x
 		if [[ $svg == *"windows-tile"* ]]; then
 			rsvg-convert "$svg" -w "$((res * 4))" -h "$((res * 4))" -o "$pngx4"
@@ -87,17 +100,17 @@ done
 
 # Handle orphaned dimensions where no SVG exists (e.g. 128x128 on macOS)
 echo "- Processing missing files for this platform..."
-for res in "${SIZES[@]}"; do
+for res in "${ICON_SIZES[@]}"; do
 	for pattern in "${MULTIRES_PATTERNS[@]}"; do
 		# Check for missing sizes
-		png="../png/${pattern}_${res}x${res}.png";
+		pngx1="../png/${pattern}_${res}x${res}.png";
 		pngx2="../png/${pattern}_${res}x${res}@2.png";
 		lookfor="${pattern}_${res}x${res}.svg"
 		fallback="${pattern}_${FALLBACK_SIZE}x${FALLBACK_SIZE}.svg"
 		if [ ! -f "$lookfor" ]; then
-			rsvg-convert $fallback -w "$res" -h "$res" -o "$png"
+			rsvg-convert "$fallback" -w "$res" -h "$res" -o "$pngx1"
 			rsvg-convert "$fallback" -w "$((res * 2))" -h "$((res * 2))" -o "$pngx2"
-			echo "  - $fallback -> { $png $pngx2 }"
+			echo "  - $fallback -> { $pngx1 $pngx2 }"
 		fi
 	done
 done
@@ -105,9 +118,9 @@ done
 popd >/dev/null
 
 # Handle files needed at packaging time (.ico, .icns, etc)
-echo "- Generating $FORMAT file(s)..."
+echo "- Generating $ICON_FORMAT file(s)..."
 for pattern in "${MULTIRES_PATTERNS[@]}"; do
-	case "$FORMAT" in
+	case "$ICON_FORMAT" in
 		icns)  # Apple
 			rm -rf "$pattern.iconset"
 			mkdir -p "$pattern.iconset" # .iconset suffix required
@@ -115,23 +128,23 @@ for pattern in "${MULTIRES_PATTERNS[@]}"; do
 				cp "png/${pattern}_${res}x${res}.png" "$pattern.iconset/icon_${res}x${res}.png"
 				cp "png/${pattern}_${res}x${res}@2.png" "$pattern.iconset/icon_${res}x${res}@2.png"
 			done
-			iconutil -c icns "$pattern.iconset" -o "../apple/$pattern.icns"
-			echo "  - ../apple/$pattern.icns"
+			iconutil -c icns "$pattern.iconset" -o "$ICON_DEST/$pattern.icns"
+			echo "  - $ICON_DEST/$pattern.icns"
 			;;
 		ico)    # Windows
-			mkdir -p "../nsis"
-			convert png/$pattern_*.png -background transparent "../nsis/$pattern.ico"
-			echo "  - ../nsis/$pattern.ico"
+			mkdir -p "$ICON_DEST"
+			convert "png/${pattern}_*.png" -background transparent "$ICON_DEST/$pattern.ico"
+			echo "  - $ICON_DEST/$pattern.ico"
 			# Create nsis banner
 			if [ "$pattern" == "icon" ]; then
 				# Create a white banner for the nsis installer
 				convert -size 150x57 canvas: nsis_canvas.png
-				convert nsis_canvas.png "png/${pattern}_64x64.png" -gravity center -geometry -25+1 -composite -colors 256 "../nsis/nsis_branding.bmp"
+				convert nsis_canvas.png "png/${pattern}_64x64.png" -gravity center -geometry -25+1 -composite -colors 256 "$ICON_DEST/nsis_branding.bmp"
 				rm -f nsis_canvas.png
-				echo "  - ../nsis/nsis_branding.bmp"
+				echo "  - $ICON_DEST/nsis_branding.bmp"
 
-				# Rewrite the UWP tile
-				sed -i "" "$REGEX_FULL" "../nsis/lmms.VisualElementsManifest.xml"
+				# Rewrite the UWP tile manifest BackgroundColor
+				sed -i "" "$REGEX_FULL" "$ICON_DEST/lmms.VisualElementsManifest.xml"
 			fi
 			;;
 		*)       # Linux
@@ -142,6 +155,6 @@ for pattern in "${MULTIRES_PATTERNS[@]}"; do
 done
 
 echo "- Cleaning up temporary files..."
-rm -rf *.iconset
+rm -rf ./*.iconset
 
 popd >/dev/null

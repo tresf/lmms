@@ -1,5 +1,5 @@
 FIND_PACKAGE(Git)
-SET(LMMS_RELEASE_TYPE "Stable" CACHE STRING)
+SET(LMMS_RELEASE_TYPE "Stable" CACHE STRING "Release type for branding")
 IF(GIT_FOUND AND NOT FORCE_VERSION)
 	# Look for git tag information (e.g. Tagged: "v1.0.0", Non-tagged: "v1.0.0-123-a1b2c3d")
 	EXECUTE_PROCESS(
