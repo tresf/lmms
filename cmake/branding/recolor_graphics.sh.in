@@ -14,21 +14,21 @@ MULTIRES_PATTERNS=("icon" "project")
 
 pushd $DIR >/dev/null
 
-# REGEX_FIND=("#780116" "#c51306") # cubician's red branding
-REGEX_FIND=("#27ab5f" "#249a56") # umcaruje's green branding
+REGEX_FIND=("#27ab5f" "#249a56" "#34d07b") # green branding
 
 echo "Creating LMMS_RELEASE_TYPE=\"@LMMS_RELEASE_TYPE@\" resources for \"@PROJECT_NAME@ @VERSION@\"..."
 case "@LMMS_RELEASE_TYPE@" in
-	Stable) REGEX_REPLACE=("#249a56" "#50d99b");;
-	Beta) REGEX_REPLACE=("#0267c1" "#09a9d9");;
-	Nightly) REGEX_REPLACE=("#ffa40f" "#fad200");;
-	*) REGEX_REPLACE=("#780116" "#c51306");;
+	Stable) REGEX_REPLACE=("#27ab5f" "#249a56" "#34d07b");;
+	Beta) REGEX_REPLACE=("#09a9d9" "#0267c1" "#35a9d0");;
+	Nightly) REGEX_REPLACE=("#fad200" "#ffa40f" "#ffe14d");;
+	*) REGEX_REPLACE=("#780116" "#c51306" "#d03535");;
 esac
 
 # Prepare sed colorize expression
 REGEX_FULL=""
 for i in "${!REGEX_FIND[@]}"; do
 	REGEX_FULL+="s/${REGEX_FIND[$i]}/${REGEX_REPLACE[$i]}/g;"
+	# FIXME: Should we quietly exit if REGEX_FIND == REGEX_REPLACE?
 done
 
 # shellcheck disable=SC2157
