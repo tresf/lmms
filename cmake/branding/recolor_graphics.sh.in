@@ -22,11 +22,14 @@ MULTIRES_PATTERNS=("icon" "project")
 pushd "$DIR" >/dev/null
 
 # HTML color codes to search for
+# CIRCLE-CI: Comment out unused colors or fall victim to the dredded shellcheck SC2034
 HTML_GREEN=("#27ab5f" "#249a56" "#34d07b")
-HTML_BLUE=("#09a9d9" "#0267c1" "#35a9d0")
-HTML_YELLOW=("#fad200" "#ffa40f" "#ffe14d")
-HTML_RED=("#780116" "#c51306" "#d03535")
-HTML_PURPLE=("#5e53b6" "#4d41a4" "#7b6ddd")
+HTML_BLUE=("#0892ca" "#0569bc" "#2d90e2") # rebecca's blue
+HTML_YELLOW=("#f5cc38" "#fe9100" "#ffdc60") # rebecca's yellow
+# HTML_BLUE=("#09a9d9" "#0267c1" "#35a9d0") # cubician's blue
+# HTML_YELLOW=("#fad200" "#ffa40f" "#ffe14d") # cubician's yellow
+# HTML_RED=("#780116" "#c51306" "#d03535") # cubician's red
+HTML_PURPLE=("#5e53b6" "#4d41a4" "#7b6ddd") # rebecca's purple
 
 REGEX_FIND=("${HTML_GREEN[@]}")
 
@@ -35,7 +38,7 @@ case "$LMMS_RELEASE_TYPE" in
 	Stable) REGEX_REPLACE=("${HTML_GREEN[@]}");;
 	Beta) REGEX_REPLACE=("${HTML_BLUE[@]}");;
 	Nightly) REGEX_REPLACE=("${HTML_YELLOW[@]}");;
-	*) REGEX_REPLACE=("${HTML_PURPLE[@]}");;
+	Unknown | *) REGEX_REPLACE=("${HTML_PURPLE[@]}");;
 esac
 
 # Prepare sed colorize expression
@@ -114,6 +117,20 @@ for res in "${ICON_SIZES[@]}"; do
 		fi
 	done
 done
+
+# TODO: Remove montage preview code
+echo "- Making montage preview..."
+montage=""
+for pattern in "${MULTIRES_PATTERNS[@]}"; do
+	for res in "${ICON_SIZES[@]}"; do
+		montage+=" ../png/${pattern}_${res}x${res}.png"
+	done
+done
+montage+=" ../png/windows-tile_48x48@4.png"
+montage+=" ../data/themes/default/splash.png"
+outfile="$HOME/Desktop/${LMMS_RELEASE_TYPE}_preview.png"
+montage $montage -mode Concatenate -background transparent -tile "${#ICON_SIZES[@]}x" "$outfile"
+convert "$outfile" -trim +repage "$outfile"
 
 popd >/dev/null
 

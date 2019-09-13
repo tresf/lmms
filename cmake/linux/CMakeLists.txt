@@ -1,3 +1,5 @@
+# FIXME USE INSTALL_DATA_SUBDIRS
+
 INSTALL(DIRECTORY icons/                DESTINATION "${DATA_DIR}/icons/hicolor")
 INSTALL(FILES lmms.desktop              DESTINATION "${DATA_DIR}/applications")
 INSTALL(FILES lmms.xml                  DESTINATION "${DATA_DIR}/mime/packages")
