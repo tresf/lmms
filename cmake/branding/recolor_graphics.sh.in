@@ -2,11 +2,11 @@
 set -e # Exit on first error
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Common icon resolutions, fee free to change
+# Common icon resolutions
 WINDOWS_SIZES=(16 32 48 64 128)
 APPLE_SIZES=(16 32 128 256 512)
 LINUX_SIZES=(16 24 32 48 64 96 128)
- # Fallback svg to use if an exact match can't be found
+# Fallback svg to use if an exact match can't be found
 FALLBACK_SIZE=64
 
 # File patterns for icons
@@ -124,7 +124,7 @@ for pattern in "${MULTIRES_PATTERNS[@]}"; do
 			echo "  - ../nsis/$pattern.ico"
 			# Create nsis banner
 			if [ "$pattern" == "icon" ]; then
-				# create a white banner for the nsis installer
+				# Create a white banner for the nsis installer
 				convert -size 150x57 canvas: nsis_canvas.png
 				convert nsis_canvas.png "png/${pattern}_64x64.png" -gravity center -geometry -25+1 -composite -colors 256 "../nsis/nsis_branding.bmp"
 				rm -f nsis_canvas.png
