@@ -1,98 +1,147 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e # Exit on first error
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-echo "Detecting build type..."
-readarray -d - -t TAGS_LIST <<< "@FORCE_VERSION@" # Splits FORCE_VERSION into an array called TAGS_LIST with - as the delimiter
+# Common icon resolutions, fee free to change
+WINDOWS_SIZES=(16 32 48 64 128)
+APPLE_SIZES=(16 32 128 256 512)
+LINUX_SIZES=(16 24 32 48 64 96 128)
+ # Fallback svg to use if an exact match can't be found
+FALLBACK_SIZE=64
 
-if [ ${#TAGS_LIST[@]} -eq "1" ]; then # If there were no dashes, we should be stable (e.g. 1.2.0 has no dashes)
-	BUILD_TYPE="RELEASE"
-	COLOR_PARAMS='s/#780116/#249a56/g; s/#c51306/#50d99b/g'
-else
-	case ${TAGS_LIST[1]} in # If there are dashes, let's see what is after them
-		b* | rc* ) # Beta/Release Candidate
-		BUILD_TYPE="BETA"
-		COLOR_PARAMS='s/#780116/#0267c1/g; s/#c51306/#09a9d9/g'
-		;;
-		c* | n* ) # Canary/Nightly
-		BUILD_TYPE="NIGHTLY"
-		COLOR_PARAMS='s/#780116/#ffa40f/g; s/#c51306/#fad200/g'
-		;;
-		* ) # No build type detected
-		BUILD_TYPE="UNKNOWN"
-		COLOR_PARAMS=''
-		;;
-	esac
-fi
+# File patterns for icons
+MULTIRES_PATTERNS=("icon" "project")
 
-echo "$BUILD_TYPE build type detected!"
+pushd $DIR >/dev/null
 
-# shellcheck disable=SC2157
-if [ -n "@LMMS_BUILD_APPLE@" ]; then
-	SIZES=(16 32 64 128 256 512)
-	LOCATION="lmms.iconset/icon_RESxRES.png"
-	HIRES="lmms.iconset/icon_RESxRES@2x.png"
-	mkdir recolored/lmms.iconset
-elif [ -n "@LMMS_BUILD_WIN32@" ]; then
-	SIZES=(16 32 48 64 128)
-	LOCATION="icon_RESxRES.png"
-	HIRES='' # No Hi-resolution duplicates
-else # Linux
-	SIZES=(16 24 32 48 64 96 128)
-	LOCATION="icons/RESxRES/apps/lmms.png"
-	HIRES="icons/RESxRES@2/apps/lmms.png"
-	# Linux is weird, so might as well get this part done ahead of time
-	for RES in "${SIZES[@]}" # make the folders ahead of time since rsvg-convert won't
-	do
-		mkdir -p "recolored/icons/${RES}x${RES}/apps"
-		mkdir -p "recolored/icons/${RES}x${RES}@2/apps"
-	done
-	mkdir -p recolored/icons/scalable/apps
-	cp recolored/icon.svg recolored/icons/scalable/apps/lmms.svg
-fi
+# REGEX_FIND=("#780116" "#c51306") # cubician's red branding
+REGEX_FIND=("#27ab5f" "#249a56") # umcaruje's green branding
 
-mkdir recolored
+echo "Creating LMMS_RELEASE_TYPE=\"@LMMS_RELEASE_TYPE@\" resources for \"@PROJECT_NAME@ @VERSION@\"..."
+case "@LMMS_RELEASE_TYPE@" in
+	Stable) REGEX_REPLACE=("#249a56" "#50d99b");;
+	Beta) REGEX_REPLACE=("#0267c1" "#09a9d9");;
+	Nightly) REGEX_REPLACE=("#ffa40f" "#fad200");;
+	*) REGEX_REPLACE=("#780116" "#c51306");;
+esac
 
-echo "Recoloring universal vector images..."
-sed "${COLOR_PARAMS}" icon.svg > recolored/icon.svg
-sed "${COLOR_PARAMS}" splash.svg > recolored/splash.svg
-
-echo "Generating raster images for icon..."
-for RES in "${SIZES[@]}"
-do
-	rsvg-convert recolored/icon.svg -w "$RES" -h "$RES" -o "recolored/${LOCATION//RES/$RES}"
+# Prepare sed colorize expression
+REGEX_FULL=""
+for i in "${!REGEX_FIND[@]}"; do
+	REGEX_FULL+="s/${REGEX_FIND[$i]}/${REGEX_REPLACE[$i]}/g;"
 done
 
-# If Hi-resolution is enabled, generate 2x duplicates in the correct locations
-if [ $HIRES ]; then
-	echo "Generating high-resolution raster images for icon..."
-	for RES in "${SIZES[@]}"
-	do
-		rsvg-convert recolored/icon.svg -w $((RES * 2)) -h $((RES * 2)) -o "recolored/${HIRES//RES/$RES}"
-	done
-fi
-
-echo "Generating raster images for splash screen..." # Currently this just directly overwrites the defaul theme
-rsvg-convert recolored-splash.svg -w 680 -h 573 -o "../data/themes/default/splash.png"
-
-# System-specific
 # shellcheck disable=SC2157
 if [ -n "@LMMS_BUILD_APPLE@" ]; then
-	echo "Generating macOS .icns from raster images..."
-	iconutil -c icns -o ../apple/icon.icns recolored/lmms.iconset
+	FORMAT="icns"
+	SIZES=("${APPLE_SIZES[@]}")
+	DEST="../apple"
 elif [ -n "@LMMS_BUILD_WIN32@" ]; then
-	echo "Recoloring NSIS-specific vector images..."
-	sed "$COLOR_PARAMS" logo.svg > recolored/logo.svg
-	sed "$COLOR_PARAMS" logo-small.svg > recolored/logo-small.svg
-	echo "Generating raster images for NSIS installer..."
-	rsvg-convert -w 192 -h 192 recolored/logo-small.svg -o ../nsis/assets/SmallLogo.png
-	rsvg-convert -w 600 -h 600 recolored/logo.svg -o ../nsis/assets/Logo.png
-	echo "Generating Windows .ico from raster images..."
-	convert recolored/icon_16x16.png recolored/icon_32x32.png recolored/icon_48x48.png recolored/icon_64x64.png recolored/icon_128x128.png -background transparent ../nsis/icon.ico
-else # Linux
-	echo "Replacing old icons with recolored ones..."
-	cp -r -f recolored/icons ../linux
+	FORMAT="ico"
+	SIZES=("${WINDOWS_SIZES[@]}")
+	DEST="../nsis"
+else
+	FORMAT="all"
+	SIZES=("${LINUX_SIZES[@]}")
+	DEST="../linux"
 fi
 
-echo "Cleaning up temporary files..."
-rm -r -f recolored
+# Process colors in all SVG files, export raster imgages
+pushd svg >/dev/null
+echo "- Processing svg files at their native resolutions..."
+for svg in *.svg; do
+	echo -n "  - $svg "
+	# Overwrite svg's in place, since we're working from a copy
+	sed -i "" "$REGEX_FULL" "$svg"
 
-echo "Recoloring based on build type completed."
+	tally=""
+	pngx1="../png/$(echo "$svg"|sed 's/.svg$/.png/g')"
+	pngx2="../png/$(echo "$svg"|sed 's/.svg$/@2.png/g')"
+	pngx4="../png/$(echo "$svg"|sed 's/.svg$/@4.png/g')"
+	res="$(echo "$svg"|sed -E 's/(.)*_//g' |cut -d 'x' -f1)"
+
+	# Handle the splash screen
+	# Important, for this to work, INSTALL_DATA_SUBDIRS(...) must be called in data/themes THEN cmake/branding
+	if [[ $svg == *"splash"* ]]; then
+		pngx1="../data/themes/default/splash.png"
+	fi
+
+	# Export rasterized versions to a folder called /png/
+	mkdir -p "$(dirname $pngx1)"
+	if [ "$res" -eq "$res" 2>/dev/null ]; then # integer
+		# Windows UWP tile is always 4x
+		if [[ $svg == *"windows-tile"* ]]; then
+			rsvg-convert "$svg" -w "$((res * 4))" -h "$((res * 4))" -o "$pngx4"
+			tally+="$pngx4"
+		else
+			rsvg-convert "$svg" -w "$res" -h "$res" -o "$pngx1"
+			rsvg-convert "$svg" -w "$((res * 2))" -h "$((res * 2))" -o "$pngx2"
+			tally+="$pngx1 $pngx2"
+		fi
+	else
+		rsvg-convert "$svg" -o "$pngx1"
+		tally+="$pngx1"
+	fi
+	echo " -> { $tally }"
+done
+
+# Handle orphaned dimensions where no SVG exists (e.g. 128x128 on macOS)
+echo "- Processing missing files for this platform..."
+for res in "${SIZES[@]}"; do
+	for pattern in "${MULTIRES_PATTERNS[@]}"; do
+		# Check for missing sizes
+		png="../png/${pattern}_${res}x${res}.png";
+		pngx2="../png/${pattern}_${res}x${res}@2.png";
+		lookfor="${pattern}_${res}x${res}.svg"
+		fallback="${pattern}_${FALLBACK_SIZE}x${FALLBACK_SIZE}.svg"
+		if [ ! -f "$lookfor" ]; then
+			rsvg-convert $fallback -w "$res" -h "$res" -o "$png"
+			rsvg-convert "$fallback" -w "$((res * 2))" -h "$((res * 2))" -o "$pngx2"
+			echo "  - $fallback -> { $png $pngx2 }"
+		fi
+	done
+done
+
+popd >/dev/null
+
+# Handle files needed at packaging time (.ico, .icns, etc)
+echo "- Generating $FORMAT file(s)..."
+for pattern in "${MULTIRES_PATTERNS[@]}"; do
+	case "$FORMAT" in
+		icns)  # Apple
+			rm -rf "$pattern.iconset"
+			mkdir -p "$pattern.iconset" # .iconset suffix required
+			for res in "${APPLE_SIZES[@]}"; do
+				cp "png/${pattern}_${res}x${res}.png" "$pattern.iconset/icon_${res}x${res}.png"
+				cp "png/${pattern}_${res}x${res}@2.png" "$pattern.iconset/icon_${res}x${res}@2.png"
+			done
+			iconutil -c icns "$pattern.iconset" -o "../apple/$pattern.icns"
+			echo "  - ../apple/$pattern.icns"
+			;;
+		ico)    # Windows
+			mkdir -p "../nsis"
+			convert png/$pattern_*.png -background transparent "../nsis/$pattern.ico"
+			echo "  - ../nsis/$pattern.ico"
+			# Create nsis banner
+			if [ "$pattern" == "icon" ]; then
+				# create a white banner for the nsis installer
+				convert -size 150x57 canvas: nsis_canvas.png
+				convert nsis_canvas.png "png/${pattern}_64x64.png" -gravity center -geometry -25+1 -composite -colors 256 "../nsis/nsis_branding.bmp"
+				rm -f nsis_canvas.png
+				echo "  - ../nsis/nsis_branding.bmp"
+
+				# Rewrite the UWP tile
+				sed -i "" "$REGEX_FULL" "../nsis/lmms.VisualElementsManifest.xml"
+			fi
+			;;
+		*)       # Linux
+			# FIXME, build linux directory structure
+			echo "Warning: Linux isn't generating themed files."
+			;;
+	esac
+done
+
+echo "- Cleaning up temporary files..."
+rm -rf *.iconset
+
+popd >/dev/null
