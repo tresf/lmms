@@ -33,7 +33,7 @@ HTML_PURPLE=("#5e53b6" "#4d41a4" "#7b6ddd") # rebecca's purple
 
 REGEX_FIND=("${HTML_GREEN[@]}")
 
-echo "Creating LMMS_RELEASE_TYPE=\"$LMMS_RELEASE_TYPE\" resources for \"$PROJECT_NAME $VERSION\"..."
+echo "-- Creating LMMS_RELEASE_TYPE=\"$LMMS_RELEASE_TYPE\" resources for \"$PROJECT_NAME $VERSION\"..."
 case "$LMMS_RELEASE_TYPE" in
 	Stable) REGEX_REPLACE=("${HTML_GREEN[@]}");;
 	Beta) REGEX_REPLACE=("${HTML_BLUE[@]}");;
@@ -64,13 +64,11 @@ fi
 
 # Process colors in all SVG files, export raster imgages
 pushd svg >/dev/null
-echo "- Processing svg files at their native resolutions..."
+echo "--   Branding svg files at their native resolutions..."
 for svg in *.svg; do
-	echo -n "  - $svg "
 	# Overwrite svg's in place, since we're working from a copy
 	sed -i "" "$REGEX_FULL" "$svg"
 
-	tally=""
 	pngx1="../png/${svg/%.svg/.png}"
 	pngx2="../png/${svg/%.svg/@2.png}"
 	pngx4="../png/${svg/%.svg/@4.png}"
@@ -88,21 +86,17 @@ for svg in *.svg; do
 		# Windows UWP tile is always 4x
 		if [[ $svg == *"windows-tile"* ]]; then
 			rsvg-convert "$svg" -w "$((res * 4))" -h "$((res * 4))" -o "$pngx4"
-			tally+="$pngx4"
 		else
 			rsvg-convert "$svg" -w "$res" -h "$res" -o "$pngx1"
 			rsvg-convert "$svg" -w "$((res * 2))" -h "$((res * 2))" -o "$pngx2"
-			tally+="$pngx1 $pngx2"
 		fi
 	else
 		rsvg-convert "$svg" -o "$pngx1"
-		tally+="$pngx1"
 	fi
-	echo " -> { $tally }"
 done
 
 # Handle orphaned dimensions where no SVG exists (e.g. 128x128 on macOS)
-echo "- Processing missing files for this platform..."
+echo "--   Branding missing files for this platform..."
 for res in "${ICON_SIZES[@]}"; do
 	for pattern in "${MULTIRES_PATTERNS[@]}"; do
 		# Check for missing sizes
@@ -113,13 +107,12 @@ for res in "${ICON_SIZES[@]}"; do
 		if [ ! -f "$lookfor" ]; then
 			rsvg-convert "$fallback" -w "$res" -h "$res" -o "$pngx1"
 			rsvg-convert "$fallback" -w "$((res * 2))" -h "$((res * 2))" -o "$pngx2"
-			echo "  - $fallback -> { $pngx1 $pngx2 }"
 		fi
 	done
 done
 
 # TODO: Remove montage preview code
-echo "- Making montage preview..."
+echo "--   Branding montage preview..."
 montage=""
 for pattern in "${MULTIRES_PATTERNS[@]}"; do
 	for res in "${ICON_SIZES[@]}"; do
@@ -136,7 +129,7 @@ convert "$outfile" -trim +repage "$outfile"
 popd >/dev/null
 
 # Handle files needed at packaging time (.ico, .icns, etc)
-echo "- Generating $ICON_FORMAT file(s)..."
+echo "--   Branding $ICON_FORMAT file(s)..."
 for pattern in "${MULTIRES_PATTERNS[@]}"; do
 	case "$ICON_FORMAT" in
 		icns)  # Apple
@@ -147,7 +140,7 @@ for pattern in "${MULTIRES_PATTERNS[@]}"; do
 				cp "png/${pattern}_${res}x${res}@2.png" "$pattern.iconset/icon_${res}x${res}@2.png"
 			done
 			iconutil -c icns "$pattern.iconset" -o "$ICON_DEST/$pattern.icns"
-			echo "  - $ICON_DEST/$pattern.icns"
+			echo "--     $ICON_DEST/$pattern.icns"
 			;;
 		ico)    # Windows
 			mkdir -p "$ICON_DEST"
@@ -159,7 +152,7 @@ for pattern in "${MULTIRES_PATTERNS[@]}"; do
 				convert -size 150x57 canvas: nsis_canvas.png
 				convert nsis_canvas.png "png/${pattern}_64x64.png" -gravity center -geometry -25+1 -composite -colors 256 "$ICON_DEST/nsis_branding.bmp"
 				rm -f nsis_canvas.png
-				echo "  - $ICON_DEST/nsis_branding.bmp"
+				echo "--     $ICON_DEST/nsis_branding.bmp"
 
 				# Rewrite the UWP tile manifest BackgroundColor
 				sed -i "" "$REGEX_FULL" "$ICON_DEST/lmms.VisualElementsManifest.xml"
@@ -172,7 +165,7 @@ for pattern in "${MULTIRES_PATTERNS[@]}"; do
 	esac
 done
 
-echo "- Cleaning up temporary files..."
+echo "--   Cleaning branding temp files..."
 rm -rf ./*.iconset
 
 popd >/dev/null
