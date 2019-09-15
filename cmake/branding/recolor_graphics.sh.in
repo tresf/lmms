@@ -24,12 +24,8 @@ pushd "$DIR" >/dev/null
 # HTML color codes to search for
 # CIRCLE-CI: Comment out unused colors or fall victim to the dredded shellcheck SC2034
 HTML_GREEN=("#27ab5f" "#249a56" "#34d07b")
-HTML_BLUE=("#0892ca" "#0569bc" "#2d90e2") # rebecca's blue
-HTML_YELLOW=("#f5cc38" "#fe9100" "#ffdc60") # rebecca's yellow
-# HTML_BLUE=("#09a9d9" "#0267c1" "#35a9d0") # cubician's blue
-# HTML_YELLOW=("#fad200" "#ffa40f" "#ffe14d") # cubician's yellow
-# HTML_RED=("#780116" "#c51306" "#d03535") # cubician's red
-HTML_PURPLE=("#5e53b6" "#4d41a4" "#7b6ddd") # rebecca's purple
+HTML_BLUE=("#3992cb" "#2b6fc5" "#3992cb")
+HTML_PURPLE=("#5547bd" "#493ba1" "#7871c5")
 
 REGEX_FIND=("${HTML_GREEN[@]}")
 
@@ -37,8 +33,7 @@ echo "-- Creating LMMS_RELEASE_TYPE=\"$LMMS_RELEASE_TYPE\" resources for \"$PROJ
 case "$LMMS_RELEASE_TYPE" in
 	Stable) REGEX_REPLACE=("${HTML_GREEN[@]}");;
 	Beta) REGEX_REPLACE=("${HTML_BLUE[@]}");;
-	Nightly) REGEX_REPLACE=("${HTML_YELLOW[@]}");;
-	Unknown | *) REGEX_REPLACE=("${HTML_PURPLE[@]}");;
+	Nightly|Unknown|*) REGEX_REPLACE=("${HTML_PURPLE[@]}");;
 esac
 
 # Prepare sed colorize expression
