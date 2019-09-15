@@ -23,9 +23,9 @@ pushd "$DIR" >/dev/null
 
 # HTML color codes to search for
 # CIRCLE-CI: Comment out unused colors or fall victim to the dredded shellcheck SC2034
-HTML_GREEN=("#27ab5f" "#249a56" "#34d07b")
-HTML_BLUE=("#3992cb" "#2b6fc5" "#3992cb")
-HTML_PURPLE=("#5547bd" "#493ba1" "#7871c5")
+HTML_GREEN=("#27ab5f" "#249a56" "#34d07b", 'opacity=".1" fill="#fff')
+HTML_BLUE=("#3992cb" "#2b6fc5" "#3992cb", 'opacity=".1" fill="#fff')
+HTML_PURPLE=("#5547bd" "#493ba1" "#7871c5", 'opacity=".05" fill="#fff')
 
 REGEX_FIND=("${HTML_GREEN[@]}")
 
