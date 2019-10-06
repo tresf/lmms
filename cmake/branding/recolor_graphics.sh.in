@@ -69,12 +69,6 @@ for svg in *.svg; do
 	pngx4="../png/${svg/%.svg/@4.png}"
 	res="$(echo "$svg"|sed -E 's/(.)*_//g' |cut -d 'x' -f1)"
 
-	# Handle the splash screen
-	# Important, for this to work, INSTALL_DATA_SUBDIRS(...) must be called in data/themes THEN cmake/branding
-	if [[ $svg == *"splash"* ]]; then
-		pngx1="../data/themes/default/splash.png"
-	fi
-
 	# Export rasterized versions to a folder called /png/
 	mkdir -p "$(dirname $pngx1)"
 	if [ "$res" -eq "$res" ] 2>/dev/null; then # integer
@@ -106,6 +100,18 @@ for res in "${ICON_SIZES[@]}"; do
 	done
 done
 
+# Copy file, echo its location; creating parent dirs as needed
+copy_file () {
+	mkdir -p "$(dirname "$2")"
+	cp "$1" "$2"
+	echo "       $2"
+}
+# INSTALL_DATA_SUBDIRS expects _subdir="themes", place files in "default"
+echo "--   Copying theme files to be used for INSTALL()..."
+copy_file ../png/splash.png ../default/splash.png
+copy_file ../png/icon_32x32.png ../default/icon_small.png
+copy_file ../png/icon_128x128.png ../default/icon.png
+
 # TODO: Remove montage preview code
 echo "--   Branding montage preview..."
 montage=""
@@ -115,7 +121,7 @@ for pattern in "${MULTIRES_PATTERNS[@]}"; do
 	done
 done
 montage+=" ../png/windows-tile_48x48@4.png"
-montage+=" ../data/themes/default/splash.png"
+montage+=" ../default/splash.png"
 outfile="$HOME/Desktop/${LMMS_RELEASE_TYPE}_preview.png"
 # shellcheck disable=SC2086
 montage $montage -mode Concatenate -background transparent -tile "${#ICON_SIZES[@]}x" "$outfile"
