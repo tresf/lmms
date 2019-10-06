@@ -22,7 +22,7 @@ ENDMACRO()
 
 MACRO(INSTALL_DATA_SUBDIRS _subdir _wildcards)
 	FOREACH(_wildcard ${_wildcards})
-		# Handle absolue wildcard paths
+		# Handle absolute _wildcard paths
 		SET(IS_ABSOLUTE False)
 		STRING(FIND "${_wildcard}" "${CMAKE_CURRENT_BINARY_DIR}" IS_BINARY_DIR)
 		STRING(FIND "${_wildcard}" "${CMAKE_CURRENT_SOURCE_DIR}" IS_SOURCE_DIR)
