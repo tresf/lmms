@@ -180,13 +180,11 @@ FOREACH(pattern ${MULTIRES_PATTERNS})
         # Windows
         # Create .ico file
         EXECUTE_PROCESS(COMMAND convert "png/${pattern}_*.png" -background transparent "${ICON_DEST}/${pattern}.ico" WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
-
         IF(pattern STREQUAL "icon")
             # Create nsis banner
             EXECUTE_PROCESS(COMMAND convert -size 150x57 canvas: nsis_canvas.png WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
             EXECUTE_PROCESS(COMMAND convert nsis_canvas.png "png/${pattern}_64x64.png" -gravity center -geometry -25+1 -composite -colors 256 "${ICON_DEST}/nsis_branding.bmp" WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
             MESSAGE(STATUS "    ${ICON_DEST}/nsis_branding.bmp")
-
             # Rewrite the UWP tile manifest BackgroundColor
             SET(uwp_file "${CMAKE_CURRENT_BINARY_DIR}/${ICON_DEST}/lmms.VisualElementsManifest.xml")
             SEARCH_AND_REPLACE("${uwp_file}" "${uwp_file}" "${SVG_SEARCH}" "${SVG_REPLACE}")
