@@ -196,11 +196,3 @@ FOREACH(pattern ${MULTIRES_PATTERNS})
         MESSAGE(STATUS "Warning: Linux isn't generating themed files.")
     ENDIF()
 ENDFOREACH()
-
-#CONFIGURE_FILE("recolor_graphics.sh.in" "recolor_graphics.sh" @ONLY)
-# FILE(COPY svg/ DESTINATION svg/)
-# FIXME, this runs each time cmake is called and it's a tad slow
-
-# Run only if the LMMS_RELEASE_TYPE has changed
-
-#INSTALL_DATA_SUBDIRS("themes" "${CMAKE_CURRENT_BINARY_DIR}/default/*.png")
