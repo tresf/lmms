@@ -6,6 +6,25 @@ IF(NOT CMAKE_VERSION VERSION_LESS 3.9)
   CMAKE_POLICY(SET CMP0068 OLD)
 ENDIF()
 
+# If Carla was not provided by the system, make a dummy library instead
+if(NOT LMMS_HAVE_CARLA)
+  # Mimic the Makefile header
+  FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/config.h "")
+  SET(CARLA_INCLUDE_DIRS
+    carla/source
+    carla/source/includes
+    carla/source/utils
+    carla/source/backend
+    ${CMAKE_CURRENT_BINARY_DIR}
+  )
+  INCLUDE_DIRECTORIES(${CARLA_INCLUDE_DIRS})
+  ADD_LIBRARY(carla_native-plugin SHARED DummyCarla.cpp)
+  SET(CARLA_LIBRARIES carla_native-plugin)
+
+  SET(CARLA_LIBRARY_DIRS "")
+  SET(LMMS_HAVE_CARLA true)
+endif()
+
 if(LMMS_HAVE_CARLA)
         INCLUDE(BuildPlugin)
         INCLUDE_DIRECTORIES(${CARLA_INCLUDE_DIRS})
