@@ -11,10 +11,10 @@ if(LMMS_HAVE_WEAKCARLA)
   # Mimic the Makefile header
   FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/config.h "")
   SET(CARLA_INCLUDE_DIRS
-    carla/source
-    carla/source/includes
-    carla/source/utils
-    carla/source/backend
+    ${CMAKE_CURRENT_SOURCE_DIR}/carla/source
+    ${CMAKE_CURRENT_SOURCE_DIR}/carla/source/includes
+    ${CMAKE_CURRENT_SOURCE_DIR}/carla/source/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/carla/source/backend
     ${CMAKE_CURRENT_BINARY_DIR}
   )
   INCLUDE_DIRECTORIES(${CARLA_INCLUDE_DIRS})
@@ -22,6 +22,10 @@ if(LMMS_HAVE_WEAKCARLA)
   INSTALL(TARGETS carla_native-plugin LIBRARY DESTINATION "${PLUGIN_DIR}/optional")
   SET(CARLA_LIBRARIES $<TARGET_FILE:carla_native-plugin>)
   SET(CARLA_LIBRARY_DIRS $<TARGET_FILE_DIR:carla_native-plugin>)
+  # Set parent scope variables so carlarack and carlapatchbay can see them
+  SET(CARLA_LIBRARIES ${CARLA_LIBRARIES} PARENT_SCOPE)
+  SET(CARLA_INCLUDE_DIRS ${CARLA_INCLUDE_DIRS} PARENT_SCOPE)
+  SET(CARLA_LIBRARY_DIRS ${CARLA_LIBRARY_DIRS} PARENT_SCOPE)
 endif()
 
 if(LMMS_HAVE_CARLA OR LMMS_HAVE_WEAKCARLA)
