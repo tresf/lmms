@@ -438,6 +438,7 @@ PluginView* CarlaInstrument::instantiateView(QWidget* parent)
 // Disable plugin focus per https://bugreports.qt.io/browse/QTBUG-30181
 #ifndef CARLA_OS_MAC
     if (QWidget* const window = parent->window())
+        // TODO: Remnove cast; Only needed for Qt4
         fHost.uiParentId = (uintptr_t)window->winId();
     else
 #endif
