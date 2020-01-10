@@ -2,7 +2,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export PATH="$PATH:/sbin"
 if command -v carla > /dev/null 2>&1; then
-   CARLAPATH="$(standard_which carla)"
+   CARLAPATH="$(command -v carla)"
    CARLAPREFIX="${CARLAPATH%/bin*}"
    echo "Carla appears to be installed on this system at $CARLAPREFIX/lib[64]/carla so we'll use it."
    export LD_LIBRARY_PATH=$CARLAPREFIX/lib/carla:$CARLAPREFIX/lib64/carla:$LD_LIBRARY_PATH
