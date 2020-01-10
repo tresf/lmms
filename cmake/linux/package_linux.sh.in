@@ -153,6 +153,7 @@ rm -f "${APPDIR}/usr/lib/libwine.so.1"
 
 # Use system-provided carla
 rm -f "${APPDIR}usr/lib/"libcarla*.so
+rm -f "${APPDIR}usr/lib/lmms/optional/"libcarla*.so
 
 # Remove bundled jack in LD_LIBRARY_PATH if exists
 if [ -e "${APPDIR}/usr/lib/libjack.so.0" ]; then
