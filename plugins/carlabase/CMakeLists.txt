@@ -7,7 +7,7 @@ IF(NOT CMAKE_VERSION VERSION_LESS 3.9)
 ENDIF()
 
 # If Carla was not provided by the system, make a dummy library instead
-if(NOT LMMS_HAVE_CARLA)
+if(LMMS_HAVE_WEAKCARLA)
   # Mimic the Makefile header
   FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/config.h "")
   SET(CARLA_INCLUDE_DIRS
@@ -22,10 +22,9 @@ if(NOT LMMS_HAVE_CARLA)
   INSTALL(TARGETS carla_native-plugin LIBRARY DESTINATION "${PLUGIN_DIR}/optional")
   SET(CARLA_LIBRARIES $<TARGET_FILE:carla_native-plugin>)
   SET(CARLA_LIBRARY_DIRS $<TARGET_FILE_DIR:carla_native-plugin>)
-  SET(LMMS_HAVE_CARLA true)
 endif()
 
-if(LMMS_HAVE_CARLA)
+if(LMMS_HAVE_CARLA OR LMMS_HAVE_WEAKCARLA)
         INCLUDE(BuildPlugin)
         INCLUDE_DIRECTORIES(${CARLA_INCLUDE_DIRS})
         LINK_DIRECTORIES(${CARLA_LIBRARY_DIRS})
@@ -36,4 +35,4 @@ if(LMMS_HAVE_CARLA)
                 BUILD_WITH_INSTALL_RPATH TRUE
                 INSTALL_RPATH_USE_LINK_PATH TRUE
                 INSTALL_RPATH "${CARLA_RPATH}")
-endif(LMMS_HAVE_CARLA)
+endif()
