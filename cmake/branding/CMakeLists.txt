@@ -7,9 +7,36 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 FIND_PACKAGE(ImageMagick COMPONENTS convert)
-# Prefer COMMAND over PKG_CHECK_MODULES per https://apple.stackexchange.com/q/169601/147537
+
+# Prefer EXECUTE_PROCESS over PKG_CHECK_MODULES per https://apple.stackexchange.com/q/169601/147537
 EXECUTE_PROCESS(COMMAND rsvg-convert --version ERROR_QUIET OUTPUT_VARIABLE RSVG_FOUND)
-IF (ImageMagick_FOUND AND RSVG_FOUND)
+
+# Fallback to gimp on Windows
+IF(LMMS_BUILD_WIN32 AND NOT (ImageMagick_FOUND AND RSVG_FOUND))
+	MESSAGE(STATUS "Branding tools are missing looking for GIMP...")
+	GET_FILENAME_COMPONENT(GIMP_REG [HKEY_CLASSES_ROOT\\GIMP2.xcf\\shell\\open\\command] ABSOLUTE)
+	STRING(REPLACE "\"" ";" GIMP_REG ${GIMP_REG})
+	LIST(LENGTH GIMP_REG GIMP_REG_SIZE)
+	IF(GIMP_REG_SIZE GREATER 1)
+		LIST(GET GIMP_REG 1 GIMP_GUI)
+		STRING(REPLACE "/gimp-" "/gimp-console-" GIMP_CONSOLE "${GIMP_GUI}")
+		EXECUTE_PROCESS(COMMAND "${GIMP_CONSOLE}" --version ERROR_QUIET OUTPUT_VARIABLE GIMP_FOUND)
+	ENDIF()
+
+	# Fallback on gimp-console alias (e.g. scoop)
+	IF(NOT GIMP_FOUND)
+		EXECUTE_PROCESS(COMMAND gimp-console --version ERROR_QUIET OUTPUT_VARIABLE GIMP_FOUND)
+		IF(GIMP_FOUND)
+			SET(GIMP_CONSOLE gimp-console)
+		ENDIF()
+	ENDIF()
+
+	IF(GIMP_FOUND)
+		MESSAGE(STATUS "GIMP found: ${GIMP_CONSOLE}")
+	ENDIF()
+ENDIF()
+
+IF((ImageMagick_FOUND AND RSVG_FOUND) OR GIMP_FOUND)
 	# Run only if the LMMS_RELEASE_TYPE has changed
 	IF(NOT LMMS_RELEASE_TYPE_CACHE STREQUAL "${LMMS_RELEASE_TYPE}")
 		SET(LMMS_RELEASE_TYPE_CACHE "${LMMS_RELEASE_TYPE}" CACHE STRING "" FORCE)
@@ -18,9 +45,10 @@ IF (ImageMagick_FOUND AND RSVG_FOUND)
 		RETURN()
 	ENDIF()
 ELSE()
-	MESSAGE(WARNING "Tools \"convert\" and/or \"rsvg-convert\" are missing.  Releases will use the default branding instead.")
+	MESSAGE(WARNING "Tools \"convert\" and/or \"rsvg-convert\" and/or \"gimp-console\" are missing.  Releases will use the default branding instead.")
 	RETURN()
 ENDIF()
+
 
 # Reads _src file, replacing any text matching _search
 # with that from _replace, writes to _dest
@@ -37,6 +65,14 @@ MACRO(SEARCH_AND_REPLACE _src _dest _search _replace)
 		STRING(REPLACE "${_search_part}" "${_replace_part}" _data "${_data}")
 	ENDFOREACH()
 	FILE(WRITE "${_dest}" "${_data}")
+ENDMACRO()
+
+MACRO(GIMP_BATCH _source _width _height _output)
+    MESSAGE(STATUS "Converting ${_source} -> ${_output} (${_width}x${_height})")
+	# FIXME: autocrop causes issues with "windows-tile"
+	# SET(_autocrop "(plug-in-autocrop RUN-NONINTERACTIVE image drawable)")
+	SET(_autocrop "")
+    EXECUTE_PROCESS(COMMAND "${GIMP_CONSOLE}" -i -b "(let* ((image (car (file-svg-load RUN-NONINTERACTIVE \"${_source}\" \"\" 72 (- 0 ${_width}) (- 0 ${_height}) 0))) (drawable (car (gimp-image-get-active-layer image)))) ${_autocrop} (gimp-file-save RUN-NONINTERACTIVE image drawable \"${_output}\" \"${_output}\") (gimp-image-delete image))" -b "(gimp-quit 0)" WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
 ENDMACRO()
 
 SET(WINDOWS_SIZES 16;32;48;64;128)
@@ -110,6 +146,8 @@ FOREACH(svg ${svgs})
 			# Windows tile is always 4x
 			MATH(EXPR res_out "${svg_res}*4")
 			SET(png_out "png/${file_name}@4.png")
+			# FIXME Make GIMP_BATCH conditonal
+			GIMP_BATCH("${svg}" "${res_out}" "${res_out}" "${png_out}")
 			EXECUTE_PROCESS(COMMAND rsvg-convert "${svg}" -w "${res_out}" -h "${res_out}" -o "${png_out}" WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
 		ELSE()
 			# Others are 1x and 2x
