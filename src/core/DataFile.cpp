@@ -32,6 +32,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QtGlobal>
 
 #include "base64.h"
 #include "ConfigManager.h"
@@ -1504,7 +1505,7 @@ void DataFile::upgrade_1_3_0()
 								port.setTagName(new_port_name(proc, 0));
 							}
 							else if(num == 4) {
-								assert(port.hasAttribute("data"));
+								Q_ASSERT(port.hasAttribute("data"));
 								// feedback is now multiplied by 0.9f => change scale
 								port.setAttribute("data", port.attribute("data").toFloat() / 0.9f);
 							}
