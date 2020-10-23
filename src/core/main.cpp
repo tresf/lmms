@@ -24,6 +24,7 @@
  */
 
 #include "lmmsconfig.h"
+#include "lmms_basics.h"
 #include "lmmsversion.h"
 #include "versioninfo.h"
 
@@ -40,9 +41,6 @@
 #include <QTextStream>
 
 #ifdef LMMS_BUILD_WIN32
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 #include <windows.h>
 #endif
 

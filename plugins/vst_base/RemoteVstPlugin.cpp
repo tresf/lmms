@@ -29,6 +29,7 @@
 
 
 #include "lmmsconfig.h"
+#include "lmms_basics.h"
 
 #define BUILD_REMOTE_PLUGIN_CLIENT
 
@@ -36,12 +37,6 @@
 
 #ifdef LMMS_HAVE_FCNTL_H
 #include <fcntl.h>
-#endif
-
-#ifdef LMMS_BUILD_LINUX
-
-#ifndef NOMINMAX
-#define NOMINMAX
 #endif
 
 #ifndef O_BINARY

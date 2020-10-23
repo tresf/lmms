@@ -7,6 +7,9 @@ IF(LMMS_HAVE_WEAKJACK)
 	
 	# Library stub for AppImages running on systems without jack
 	ADD_LIBRARY(weakjack MODULE weakjack/weak_libjack.c weakjack/weak_libjack.h)
+
+	# jack.h imports windows.h, force NOMINMAX on a header we don't manage instead of via lmms_basics.h
+	TARGET_COMPILE_DEFINITIONS(weakjack PRIVATE NOMINMAX)
 	TARGET_INCLUDE_DIRECTORIES(weakjack PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/weakjack ${JACK_INCLUDE_DIRS})
 	INSTALL(TARGETS weakjack LIBRARY DESTINATION "${PLUGIN_DIR}/optional")
 ENDIF()

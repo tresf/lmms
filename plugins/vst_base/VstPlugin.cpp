@@ -24,6 +24,7 @@
 
 #include "VstPlugin.h"
 
+#include "lmms_basics.h"
 #include "communication.h"
 
 #include <QtCore/QtEndian>
@@ -37,8 +38,8 @@
 #include <QMdiSubWindow>
 
 #ifdef LMMS_BUILD_LINUX
-#	include <QX11Info>
-#	include "X11EmbedContainer.h"
+#include <QX11Info>
+#include "X11EmbedContainer.h"
 #endif
 
 #include <QWindow>
@@ -46,12 +47,8 @@
 #include <QDomDocument>
 
 #ifdef LMMS_BUILD_WIN32
-#	ifndef NOMINMAX
-#		define NOMINMAX
-#	endif
-
-#	include <windows.h>
-#	include <QLayout>
+#include <windows.h>
+#include <QLayout>
 #endif
 
 #include "ConfigManager.h"
@@ -64,7 +61,7 @@
 #include "FileDialog.h"
 
 #ifdef LMMS_BUILD_LINUX
-#	include <X11/Xlib.h>
+#include <X11/Xlib.h>
 #endif
 
 namespace PE
@@ -74,7 +71,7 @@ namespace PE
 
 // Work around name conflict
 #ifdef i386
-#	undef i386
+#undef i386
 #endif
 
 enum class MachineType : uint16_t

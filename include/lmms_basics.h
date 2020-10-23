@@ -57,9 +57,10 @@ typedef uint16_t fx_ch_t;			// FX-channel (0 to MAX_EFFECT_CHANNEL)
 typedef uint32_t jo_id_t;			// (unique) ID of a journalling object
 
 
-// windows headers define "min" and "max" macros, breaking the methods bwloe
-#undef min
-#undef max
+// Prevent windows.h min/max macro from being injected
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
 template<typename T>
 struct typeInfo
