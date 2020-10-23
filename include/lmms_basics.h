@@ -61,6 +61,10 @@ typedef uint32_t jo_id_t;			// (unique) ID of a journalling object
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
+#ifdef LMMS_BUILD_WIN32
+#undef min
+#undef max
+#endif
 
 template<typename T>
 struct typeInfo
