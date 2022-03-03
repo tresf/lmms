@@ -26,12 +26,13 @@
 #ifndef _PATCHES_DIALOG_H
 #define _PATCHES_DIALOG_H
 
+#include <fluidsynth/types.h>
+
 #include "ui_patches_dialog.h"
 #include "LcdSpinBox.h"
 
-#include "fluidsynthshims.h"
-#include <QWidget>
-#include <QLabel>
+class QLabel;
+
 
 //----------------------------------------------------------------------------
 // qsynthPresetForm -- UI wrapper form.
@@ -43,7 +44,7 @@ class patchesDialog : public QDialog, private Ui::patchesDialog
 public:
 
 	// Constructor.
-	patchesDialog(QWidget *pParent = 0, Qt::WindowFlags wflags = 0);
+	patchesDialog(QWidget *pParent = 0, Qt::WindowFlags wflags = QFlag(0));
 
 	// Destructor.
 	virtual ~patchesDialog();

@@ -25,16 +25,16 @@
 #ifndef MIDI_CLIENT_H
 #define MIDI_CLIENT_H
 
-#include <QtCore/QStringList>
-#include <QtCore/QVector>
+#include <QStringList>
+#include <QVector>
 
 
 #include "MidiEvent.h"
-#include "MidiEventProcessor.h"
-#include "TabWidget.h"
 
 
 class MidiPort;
+class QObject;
+class TimePos;
 
 
 // base-class for all MIDI-clients
@@ -46,7 +46,7 @@ public:
 
 	// to be implemented by sub-classes
 	virtual void processOutEvent( const MidiEvent & _me,
-						const MidiTime & _time,
+						const TimePos & _time,
 						const MidiPort * _port ) = 0;
 
 	// inheriting classes can re-implement this for being able to update
@@ -124,7 +124,7 @@ public:
 	virtual ~MidiClientRaw();
 
 	// we are raw-clients for sure!
-	virtual bool isRaw() const
+	bool isRaw() const override
 	{
 		return true;
 	}
@@ -141,7 +141,7 @@ protected:
 private:
 	// this does MIDI-event-process
 	void processParsedEvent();
-	virtual void processOutEvent( const MidiEvent& event, const MidiTime& time, const MidiPort* port );
+	void processOutEvent( const MidiEvent& event, const TimePos& time, const MidiPort* port ) override;
 
 	// small helper function returning length of a certain event - this
 	// is necessary for parsing raw-MIDI-data

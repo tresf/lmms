@@ -23,7 +23,6 @@
  *
  */
 
-#include <QMessageBox>
 #include <QCloseEvent>
 
 #include "EffectControlDialog.h"
@@ -31,7 +30,7 @@
 
 
 EffectControlDialog::EffectControlDialog( EffectControls * _controls ) :
-	QWidget( NULL ),
+	QWidget( nullptr ),
 	ModelView( _controls, this ),
 	m_effectControls( _controls )
 {

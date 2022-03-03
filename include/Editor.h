@@ -28,6 +28,12 @@
 #include <QMainWindow>
 #include <QToolBar>
 
+static const int Quantizations[] = {
+	1, 2, 4, 8, 16, 32, 64,
+	3, 6, 12, 24, 48, 96, 192
+};
+
+
 class QAction;
 
 class DropToolBar;
@@ -47,7 +53,7 @@ protected:
 	DropToolBar * addDropToolBar(Qt::ToolBarArea whereToAdd, QString const & windowTitle);
 	DropToolBar * addDropToolBar(QWidget * parent, Qt::ToolBarArea whereToAdd, QString const & windowTitle);
 
-	virtual void closeEvent( QCloseEvent * _ce );
+	void closeEvent( QCloseEvent * _ce ) override;
 protected slots:
 	virtual void play() {}
 	virtual void record() {}
@@ -58,6 +64,11 @@ protected slots:
 private slots:
 	/// Called by pressing the space key. Plays or stops.
 	void togglePlayStop();
+	
+	/// Called by pressing shift+space. Toggles pause state.
+	void togglePause();
+
+	void toggleMaximize();
 
 signals:
 
@@ -92,8 +103,8 @@ signals:
 	void dropped(QDropEvent* event);
 
 protected:
-	void dragEnterEvent(QDragEnterEvent* event);
-	void dropEvent(QDropEvent* event);
+	void dragEnterEvent(QDragEnterEvent* event) override;
+	void dropEvent(QDropEvent* event) override;
 };
 
 

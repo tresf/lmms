@@ -28,7 +28,6 @@
 #include <QMouseEvent>
 
 #include "CaptionMenu.h"
-#include "MainWindow.h"
 
 
 
@@ -36,7 +35,7 @@
 AutomatableSlider::AutomatableSlider( QWidget * _parent,
 						const QString & _name ) :
 	QSlider( _parent ),
-	IntModelView( new IntModel( 0, 0, 0, NULL, _name, true ), this ),
+	IntModelView( new IntModel( 0, 0, 0, nullptr, _name, true ), this ),
 	m_showStatus( false )
 {
 	setWindowTitle( _name );

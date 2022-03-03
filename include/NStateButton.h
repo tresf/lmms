@@ -27,8 +27,8 @@
 #define NSTATE_BUTTON_H
 
 #include <QPixmap>
-#include <QtCore/QVector>
-#include <QtCore/QPair>
+#include <QVector>
+#include <QPair>
 
 #include "ToolButton.h"
 
@@ -61,7 +61,7 @@ signals:
 
 
 protected:
-	virtual void mousePressEvent( QMouseEvent * _me );
+	void mousePressEvent( QMouseEvent * _me ) override;
 
 
 private:

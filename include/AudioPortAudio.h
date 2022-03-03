@@ -25,7 +25,7 @@
 #ifndef AUDIO_PORTAUDIO_H
 #define AUDIO_PORTAUDIO_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include "lmmsconfig.h"
 #include "ComboBoxModel.h"
@@ -48,7 +48,6 @@ public:
 
 #include <portaudio.h>
 
-#include <QtCore/QSemaphore>
 
 #include "AudioDevice.h"
 #include "AudioDeviceSetupWidget.h"
@@ -67,12 +66,12 @@ class LcdSpinBox;
 class AudioPortAudio : public AudioDevice
 {
 public:
-	AudioPortAudio( bool & _success_ful, Mixer* mixer );
+	AudioPortAudio( bool & _success_ful, AudioEngine* audioEngine );
 	virtual ~AudioPortAudio();
 
 	inline static QString name()
 	{
-		return QT_TRANSLATE_NOOP( "setupWidget", "PortAudio" );
+		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget", "PortAudio" );
 	}
 
 

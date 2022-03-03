@@ -23,10 +23,7 @@
  */
 
 #include "StereoDelay.h"
-#include <cstdlib>
 #include "lmms_basics.h"
-#include "interpolation.h"
-#include "lmms_math.h"
 
 
 StereoDelay::StereoDelay( int maxTime, int sampleRate )
@@ -55,7 +52,7 @@ StereoDelay::~StereoDelay()
 
 
 
-void StereoDelay::tick( sampleFrame frame )
+void StereoDelay::tick( sampleFrame& frame )
 {
 	m_writeIndex = ( m_writeIndex + 1 ) % ( int )m_maxLength;
 	int readIndex = m_writeIndex - m_length;

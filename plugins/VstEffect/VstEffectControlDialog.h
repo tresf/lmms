@@ -26,16 +26,14 @@
 #define _VST_EFFECT_CONTROL_DIALOG_H
 
 #include "EffectControlDialog.h"
-#include "VstPlugin.h"
 
-#include <QObject>
-#include <QPainter>
-#include <QLabel>
 #include <QSharedPointer>
 
 
 class VstEffectControls;
+class VstPlugin;
 class PixmapButton;
+class QLabel;
 class QPixmap;
 class QPushButton;
 class PixmapButton;
@@ -49,8 +47,8 @@ public:
 	virtual ~VstEffectControlDialog();
 
 protected:
-	virtual void paintEvent( QPaintEvent * _pe );
-	virtual void showEvent( QShowEvent* _se ) override;
+	void paintEvent( QPaintEvent * _pe ) override;
+	void showEvent( QShowEvent* _se ) override;
 
 private:
 	QWidget * m_pluginWidget;

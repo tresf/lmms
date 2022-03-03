@@ -27,21 +27,20 @@
 #define _VESTIGE_H
 
 
+#include <QMdiSubWindow>
 #include <QMutex>
-#include <QLayout>
-#include <QScrollArea>
 
 #include "Instrument.h"
 #include "InstrumentView.h"
-#include "Note.h"
-#include "Knob.h"
-#include "SubWindow.h"
-#include "AutomatableModel.h"
 
 
 class QPixmap;
 class QPushButton;
+class QScrollArea;
 
+class CustomTextKnob;
+class FloatModel;
+class QGridLayout;
 class PixmapButton;
 class VstPlugin;
 
@@ -67,7 +66,7 @@ public:
 		return IsSingleStreamed | IsMidiBased;
 	}
 
-	virtual bool handleMidiEvent( const MidiEvent& event, const MidiTime& time, f_cnt_t offset = 0 );
+	virtual bool handleMidiEvent( const MidiEvent& event, const TimePos& time, f_cnt_t offset = 0 );
 
 	virtual PluginView * instantiateView( QWidget * _parent );
 
@@ -109,6 +108,7 @@ protected slots:
 	void syncPlugin( void );
 	void displayAutomatedOnly( void );
 	void setParameter( Model * action );
+	void syncParameterText();
 	void closeWindow();
 
 
@@ -128,7 +128,7 @@ private:
 	QPushButton * m_syncButton;
 	QPushButton * m_displayAutomatedOnly;
 	QPushButton * m_closeButton;
-	Knob ** vstKnobs;
+	CustomTextKnob ** vstKnobs;
 
 } ;
 

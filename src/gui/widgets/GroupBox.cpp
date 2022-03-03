@@ -37,7 +37,7 @@
 
 GroupBox::GroupBox( const QString & _caption, QWidget * _parent ) :
 	QWidget( _parent ),
-	BoolModelView( NULL, this ),
+	BoolModelView( nullptr, this ),
 	m_caption( _caption ),
 	m_titleBarHeight( 11 )
 {
@@ -47,7 +47,7 @@ GroupBox::GroupBox( const QString & _caption, QWidget * _parent ) :
 	m_led->setActiveGraphic( embed::getIconPixmap( "led_green" ) );
 	m_led->setInactiveGraphic( embed::getIconPixmap( "led_off" ) );
 
-	setModel( new BoolModel( false, NULL, _caption, true ) );
+	setModel( new BoolModel( false, nullptr, _caption, true ) );
 	setAutoFillBackground( true );
 	unsetCursor();
 }
@@ -90,7 +90,7 @@ void GroupBox::paintEvent( QPaintEvent * pe )
 	p.fillRect( 0, 0, width() - 1, height() - 1, p.background() );
 
 	// outer rect
-	p.setPen( p.background().color().dark( 150 ) );
+	p.setPen( p.background().color().darker( 150 ) );
 	p.drawRect( 0, 0, width() - 1, height() - 1 );
 
 	// draw line below titlebar

@@ -24,7 +24,6 @@
 
 #include "MidiAlsaRaw.h"
 #include "ConfigManager.h"
-#include "gui_templates.h"
 
 
 #ifdef LMMS_HAVE_ALSA
@@ -45,7 +44,7 @@ MidiAlsaRaw::MidiAlsaRaw() :
 		return;
 	}
 
-	snd_rawmidi_read( m_input, NULL, 0 );
+	snd_rawmidi_read( m_input, nullptr, 0 );
 
 	snd_rawmidi_nonblock( m_input, 1 );
 	m_npfds = snd_rawmidi_poll_descriptors_count( m_input );
@@ -80,7 +79,7 @@ QString MidiAlsaRaw::probeDevice()
 	QString dev = ConfigManager::inst()->value( "MidiAlsaRaw", "device" );
 	if( dev == "" )
 	{
-		if( getenv( "MIDIDEV" ) != NULL )
+		if( getenv( "MIDIDEV" ) != nullptr )
 		{
 			return getenv( "MIDIDEV" );
 		}

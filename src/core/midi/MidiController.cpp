@@ -24,19 +24,15 @@
  */
 
 #include <QDomElement>
-#include <QObject>
 
-#include "Song.h"
-#include "Mixer.h"
-#include "MidiClient.h"
+#include "AudioEngine.h"
 #include "MidiController.h"
 
 
 MidiController::MidiController( Model * _parent ) :
 	Controller( Controller::MidiController, _parent, tr( "MIDI Controller" ) ),
 	MidiEventProcessor(),
-	m_midiPort( tr( "unnamed_midi_controller" ),
-			Engine::mixer()->midiClient(), this, this, MidiPort::Input ),
+	m_midiPort( tr( "unnamed_midi_controller" ), Engine::audioEngine()->midiClient(), this, this, MidiPort::Input ),
 	m_lastValue( 0.0f ),
 	m_previousValue( 0.0f )
 {
@@ -80,7 +76,7 @@ void MidiController::updateName()
 
 
 
-void MidiController::processInEvent( const MidiEvent& event, const MidiTime& time, f_cnt_t offset )
+void MidiController::processInEvent( const MidiEvent& event, const TimePos& time, f_cnt_t offset )
 {
 	unsigned char controllerNum;
 	switch( event.type() )
@@ -152,7 +148,7 @@ QString MidiController::nodeName() const
 
 ControllerDialog * MidiController::createDialog( QWidget * _parent )
 {
-	return NULL;
+	return nullptr;
 }
 
 

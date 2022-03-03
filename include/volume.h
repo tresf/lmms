@@ -26,14 +26,11 @@
 #ifndef VOLUME_H
 #define VOLUME_H
 
-#include "lmmsconfig.h"
-
 #include "lmms_basics.h"
-#include "Midi.h"
 
-const volume_t MinVolume = 0;
-const volume_t MaxVolume = 200;
-const volume_t DefaultVolume = 100;
+constexpr volume_t MinVolume = 0;
+constexpr volume_t MaxVolume = 200;
+constexpr volume_t DefaultVolume = 100;
 
 typedef struct
 {

@@ -27,7 +27,7 @@
 #define TAB_WIDGET_H
 
 #include <QWidget>
-#include <QtCore/QMap>
+#include <QMap>
 
 const int TEXT_TAB_HEIGHT = 14;
 const int GRAPHIC_TAB_HEIGHT = 17;
@@ -42,7 +42,7 @@ public:
 				bool usePixmap = false, bool resizable = false );
 	virtual ~TabWidget() = default;
 
-	void addTab( QWidget * w, const QString & name, const char *pixmap = NULL, int idx = -1 );
+	void addTab( QWidget * w, const QString & name, const char *pixmap = nullptr, int idx = -1 );
 
 	void setActiveTab( int idx );
 
@@ -72,13 +72,13 @@ public:
 	void setTabBorder( const QColor & c );
 
 protected:
-	virtual bool event( QEvent * event );
-	virtual void mousePressEvent( QMouseEvent * _me );
-	virtual void paintEvent( QPaintEvent * _pe );
-	virtual void resizeEvent( QResizeEvent * _re );
-	virtual void wheelEvent( QWheelEvent * _we );
-	virtual QSize minimumSizeHint() const;
-	virtual QSize sizeHint() const;
+	bool event( QEvent * event ) override;
+	void mousePressEvent( QMouseEvent * _me ) override;
+	void paintEvent( QPaintEvent * _pe ) override;
+	void resizeEvent( QResizeEvent * _re ) override;
+	void wheelEvent( QWheelEvent * _we ) override;
+	QSize minimumSizeHint() const override;
+	QSize sizeHint() const override;
 
 private:
 	struct widgetDesc

@@ -101,9 +101,9 @@ public:
 	}
 
 
-	virtual void saveSettings( QDomDocument & _doc, QDomElement & _this );
-	virtual void loadSettings( const QDomElement & _this );
-	virtual QString nodeName() const;
+	void saveSettings( QDomDocument & _doc, QDomElement & _this ) override;
+	void loadSettings( const QDomElement & _this ) override;
+	QString nodeName() const override;
 
 	static Controller * create( ControllerTypes _tt, Model * _parent );
 	static Controller * create( const QDomElement & _this,
@@ -166,7 +166,7 @@ protected:
 
 
 signals:
-	// The value changed while the mixer isn't running (i.e: MIDI CC)
+	// The value changed while the audio engine isn't running (i.e: MIDI CC)
 	void valueChanged();
 
 	friend class ControllerDialog;

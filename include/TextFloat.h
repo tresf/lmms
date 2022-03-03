@@ -50,14 +50,14 @@ public:
 
 	static TextFloat * displayMessage( const QString & _msg,
 						int _timeout = 2000,
-						QWidget * _parent = NULL,
+						QWidget * _parent = nullptr,
 						int _add_y_margin = 0 );
 	static TextFloat * displayMessage( const QString & _title,
 						const QString & _msg,
 						const QPixmap & _pixmap =
 								QPixmap(),
 						int _timeout = 2000,
-						QWidget * _parent = NULL );
+						QWidget * _parent = nullptr );
 
 	void moveGlobal( QWidget * _w, const QPoint & _offset )
 	{
@@ -66,8 +66,8 @@ public:
 
 
 protected:
-	virtual void paintEvent( QPaintEvent * _me );
-	virtual void mousePressEvent( QMouseEvent * _me );
+	void paintEvent( QPaintEvent * _me ) override;
+	void mousePressEvent( QMouseEvent * _me ) override;
 
 
 private:

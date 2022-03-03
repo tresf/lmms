@@ -28,7 +28,6 @@
 #include <QPainter>
 
 #include "PixmapButton.h"
-#include "MainWindow.h"
 #include "embed.h"
 
 
@@ -57,7 +56,7 @@ void PixmapButton::paintEvent( QPaintEvent * )
 {
 	QPainter p( this );
 
-	if( ( model() != NULL && model()->value() ) || m_pressed )
+	if( ( model() != nullptr && model()->value() ) || m_pressed )
 	{
 		if( !m_activePixmap.isNull() )
 		{
@@ -132,7 +131,7 @@ void PixmapButton::setInactiveGraphic( const QPixmap & _pm, bool _update )
 
 QSize PixmapButton::sizeHint() const
 {
-	if( ( model() != NULL && model()->value() ) || m_pressed )
+	if( ( model() != nullptr && model()->value() ) || m_pressed )
 	{
 		return m_activePixmap.size() / devicePixelRatio();
 	}

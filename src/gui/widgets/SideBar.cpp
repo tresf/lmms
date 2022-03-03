@@ -49,7 +49,7 @@ public:
 		return m_orientation;
 	}
 
-	virtual QSize sizeHint() const
+	QSize sizeHint() const override
 	{
 		QSize s = QToolButton::sizeHint();
 		s.setWidth( s.width() + 8 );
@@ -62,7 +62,7 @@ public:
 
 
 protected:
-	virtual void paintEvent( QPaintEvent * )
+	void paintEvent( QPaintEvent * ) override
 	{
 		QStylePainter p( this );
 		QStyleOptionToolButton opt;
@@ -131,8 +131,8 @@ void SideBar::appendTab( SideBarWidget *widget )
 
 void SideBar::toggleButton( QAbstractButton * button )
 {
-	QToolButton *toolButton = NULL;
-	QWidget *activeWidget = NULL;
+	QToolButton *toolButton = nullptr;
+	QWidget *activeWidget = nullptr;
 
 	for( auto it = m_widgets.begin(); it != m_widgets.end(); ++it )
 	{

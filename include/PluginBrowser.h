@@ -25,7 +25,6 @@
 #ifndef PLUGIN_BROWSER_H
 #define PLUGIN_BROWSER_H
 
-#include <QtCore/QTimer>
 #include <QPixmap>
 
 #include "SideBarWidget.h"
@@ -33,7 +32,6 @@
 
 class QLineEdit;
 class QTreeWidget;
-class QTreeWidgetItem;
 
 
 class PluginBrowser : public SideBarWidget
@@ -53,8 +51,6 @@ private:
 
 	QWidget * m_view;
 	QTreeWidget * m_descTree;
-	QTreeWidgetItem * m_lmmsRoot;
-	QTreeWidgetItem * m_lv2Root;
 };
 
 

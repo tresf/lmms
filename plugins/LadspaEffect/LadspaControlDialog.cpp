@@ -26,10 +26,13 @@
 
 #include <cmath>
 
+#include <QHBoxLayout>
 #include <QGroupBox>
-#include <QLayout>
+#include <QVBoxLayout>
 
-#include "LadspaEffect.h"
+#include "LadspaBase.h"
+#include "LadspaControl.h"
+#include "LadspaControls.h"
 #include "LadspaControlDialog.h"
 #include "LadspaControlView.h"
 #include "LedCheckbox.h"
@@ -38,8 +41,8 @@
 
 LadspaControlDialog::LadspaControlDialog( LadspaControls * _ctl ) :
 	EffectControlDialog( _ctl ),
-	m_effectLayout( NULL ),
-	m_stereoLink( NULL )
+	m_effectLayout( nullptr ),
+	m_stereoLink( nullptr )
 {
 	QVBoxLayout * mainLay = new QVBoxLayout( this );
 
@@ -133,7 +136,7 @@ void LadspaControlDialog::updateEffectView( LadspaControls * _ctl )
 		m_effectLayout->addWidget( grouper );
 	}
 
-	if( _ctl->m_processors > 1 && m_stereoLink != NULL )
+	if( _ctl->m_processors > 1 && m_stereoLink != nullptr )
 	{
 		m_stereoLink->setModel( &_ctl->m_stereoLinkModel );
 	}

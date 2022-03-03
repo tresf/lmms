@@ -27,13 +27,12 @@
 
 #include "PixmapButton.h"
 
-#include <QLayout>
 
 class LeftRightNav : public QWidget
 {
 	Q_OBJECT
 public:
-	LeftRightNav(QWidget *parent=NULL);
+	LeftRightNav(QWidget *parent=nullptr);
 	PixmapButton* getLeftBtn();
 	PixmapButton* getRightBtn();
 	void setShortcuts(const QKeySequence &leftShortcut=Qt::Key_Minus, const QKeySequence &rightShortcut=Qt::Key_Plus);

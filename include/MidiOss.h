@@ -29,8 +29,8 @@
 
 #ifdef LMMS_HAVE_OSS
 
-#include <QtCore/QThread>
-#include <QtCore/QFile>
+#include <QThread>
+#include <QFile>
 
 #include "MidiClient.h"
 
@@ -58,8 +58,8 @@ public:
 	}
 
 protected:
-	virtual void sendByte( const unsigned char c );
-	virtual void run();
+	void sendByte( const unsigned char c ) override;
+	void run() override;
 
 
 private:

@@ -36,7 +36,6 @@
 #include <string>
 #include <cassert>
 
-
 #if !(defined(LMMS_HAVE_SYS_IPC_H) && defined(LMMS_HAVE_SEMAPHORE_H))
 #define SYNC_WITH_SHM_FIFO
 #define USE_QT_SEMAPHORES
@@ -45,8 +44,8 @@
 #include <process.h>
 #endif
 
-#include <QtCore/QtGlobal>
-#include <QtCore/QSystemSemaphore>
+#include <QtGlobal>
+#include <QSystemSemaphore>
 #endif
 
 
@@ -59,8 +58,8 @@
 #else
 #define USE_QT_SHMEM
 
-#include <QtCore/QtGlobal>
-#include <QtCore/QSharedMemory>
+#include <QtGlobal>
+#include <QSharedMemory>
 
 #if !defined(LMMS_HAVE_SYS_TYPES_H) || defined(LMMS_BUILD_WIN32)
 typedef int32_t key_t;
@@ -69,7 +68,7 @@ typedef int32_t key_t;
 
 
 #ifdef LMMS_HAVE_LOCALE_H
-#include <locale.h>
+#include <clocale>
 #endif
 
 #ifdef LMMS_HAVE_PTHREAD_H
@@ -89,9 +88,10 @@ typedef int32_t key_t;
 
 #else
 #include "lmms_export.h"
-#include <QtCore/QMutex>
-#include <QtCore/QProcess>
-#include <QtCore/QThread>
+#include <QMutex>
+#include <QProcess>
+#include <QThread>
+#include <QString>
 
 #ifndef SYNC_WITH_SHM_FIFO
 #include <poll.h>
@@ -137,7 +137,7 @@ public:
 #else
 		m_shmID( -1 ),
 #endif
-		m_data( NULL ),
+		m_data( nullptr ),
 		m_dataSem( QString() ),
 		m_messageSem( QString() ),
 		m_lockDepth( 0 )
@@ -157,7 +157,7 @@ public:
 		}
 		m_data = (shmData *) shmat( m_shmID, 0, 0 );
 #endif
-		assert( m_data != NULL );
+		assert( m_data != nullptr );
 		m_data->startPtr = m_data->endPtr = 0;
 		static int k = 0;
 		m_data->dataSem.semKey = ( getpid()<<10 ) + ++k;
@@ -180,7 +180,7 @@ public:
 #else
 		m_shmID( shmget( _shm_key, 0, 0 ) ),
 #endif
-		m_data( NULL ),
+		m_data( nullptr ),
 		m_dataSem( QString() ),
 		m_messageSem( QString() ),
 		m_lockDepth( 0 )
@@ -196,7 +196,7 @@ public:
 			m_data = (shmData *) shmat( m_shmID, 0, 0 );
 		}
 #endif
-		assert( m_data != NULL );
+		assert( m_data != nullptr );
 		m_dataSem.setKey( QString::number( m_data->dataSem.semKey ) );
 		m_messageSem.setKey( QString::number(
 						m_data->messageSem.semKey ) );
@@ -208,7 +208,7 @@ public:
 		if( m_master )
 		{
 #ifndef USE_QT_SHMEM
-			shmctl( m_shmID, IPC_RMID, NULL );
+			shmctl( m_shmID, IPC_RMID, nullptr );
 #endif
 		}
 #ifndef USE_QT_SHMEM
@@ -439,6 +439,7 @@ enum RemoteMessageIDs
 	IdSavePresetFile,
 	IdLoadPresetFile,
 	IdDebugMessage,
+	IdIdle,
 	IdUserBase = 64
 } ;
 
@@ -766,7 +767,7 @@ public:
 	}
 
 private:
-	virtual void run();
+	void run() override;
 
 	RemotePlugin * m_plugin;
 	volatile bool m_quit;
@@ -803,7 +804,7 @@ public:
 		m_failed = waitForMessage( IdInitDone, _busyWaiting ).id != IdInitDone;
 	}
 
-	virtual bool processMessage( const message & _m );
+	bool processMessage( const message & _m ) override;
 
 	bool process( const sampleFrame * _in_buf, sampleFrame * _out_buf );
 
@@ -999,7 +1000,6 @@ private:
 
 	sample_rate_t m_sampleRate;
 	fpp_t m_bufferSize;
-
 } ;
 
 #endif
@@ -1011,7 +1011,7 @@ private:
 #ifdef COMPILE_REMOTE_PLUGIN_BASE
 
 #ifndef BUILD_REMOTE_PLUGIN_CLIENT
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 #endif
 
 
@@ -1031,8 +1031,8 @@ RemotePluginBase::RemotePluginBase() :
 	setlocale( LC_NUMERIC, "C" );
 #endif
 #ifndef SYNC_WITH_SHM_FIFO
-	pthread_mutex_init( &m_receiveMutex, NULL );
-	pthread_mutex_init( &m_sendMutex, NULL );
+	pthread_mutex_init( &m_receiveMutex, nullptr );
+	pthread_mutex_init( &m_sendMutex, nullptr );
 #endif
 }
 
@@ -1194,8 +1194,8 @@ RemotePluginClient::RemotePluginClient( const char * socketPath ) :
 	m_shmObj(),
 	m_shmQtID( "/usr/bin/lmms" ),
 #endif
-	m_vstSyncData( NULL ),
-	m_shm( NULL ),
+	m_vstSyncData( nullptr ),
+	m_shm( nullptr ),
 	m_inputCount( 0 ),
 	m_outputCount( 0 ),
 	m_sampleRate( 44100 ),
@@ -1400,10 +1400,10 @@ void RemotePluginClient::setShmKey( key_t _key, int _size )
 		debugMessage( buf );
 	}
 #else
-	if( m_shm != NULL )
+	if( m_shm != nullptr )
 	{
 		shmdt( m_shm );
-		m_shm = NULL;
+		m_shm = nullptr;
 	}
 
 	// only called for detaching SHM?
@@ -1429,9 +1429,9 @@ void RemotePluginClient::setShmKey( key_t _key, int _size )
 
 void RemotePluginClient::doProcessing()
 {
-	if( m_shm != NULL )
+	if( m_shm != nullptr )
 	{
-		process( (sampleFrame *)( m_inputCount > 0 ? m_shm : NULL ),
+		process( (sampleFrame *)( m_inputCount > 0 ? m_shm : nullptr ),
 				(sampleFrame *)( m_shm +
 					( m_inputCount*m_bufferSize ) ) );
 	}
@@ -1443,8 +1443,14 @@ void RemotePluginClient::doProcessing()
 
 
 
-#endif
+#else
 
-#define QSTR_TO_STDSTR(s)	std::string( s.toUtf8().constData() )
+
+LMMS_EXPORT inline std::string QSTR_TO_STDSTR(QString const& qstr)
+{
+	return qstr.toStdString();
+}
+
+#endif
 
 #endif

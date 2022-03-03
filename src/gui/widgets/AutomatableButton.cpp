@@ -28,7 +28,6 @@
 #include <QMouseEvent>
 
 #include "CaptionMenu.h"
-#include "MainWindow.h"
 #include "StringPairDrag.h"
 
 
@@ -36,8 +35,8 @@
 AutomatableButton::AutomatableButton( QWidget * _parent,
 						const QString & _name ) :
 	QPushButton( _parent ),
-	BoolModelView( new BoolModel( false, NULL, _name, true ), this ),
-	m_group( NULL )
+	BoolModelView( new BoolModel( false, nullptr, _name, true ), this ),
+	m_group( nullptr )
 {
 	setWindowTitle( _name );
 	doConnections();
@@ -49,7 +48,7 @@ AutomatableButton::AutomatableButton( QWidget * _parent,
 
 AutomatableButton::~AutomatableButton()
 {
-	if( m_group != NULL )
+	if( m_group != nullptr )
 	{
 		m_group->removeButton( this );
 	}
@@ -87,9 +86,9 @@ void AutomatableButton::contextMenuEvent( QContextMenuEvent * _me )
 	// button, the context-menu appears while mouse-cursor is still hidden
 	// and it isn't shown again until user does something which causes
 	// an QApplication::restoreOverrideCursor()-call...
-	mouseReleaseEvent( NULL );
+	mouseReleaseEvent( nullptr );
 
-	if ( m_group != NULL )
+	if ( m_group != nullptr )
 	{
 		CaptionMenu contextMenu( m_group->model()->displayName() );
 		m_group->addDefaultActions( &contextMenu );
@@ -157,7 +156,7 @@ void AutomatableButton::mouseReleaseEvent( QMouseEvent * _me )
 
 void AutomatableButton::toggle()
 {
-	if( isCheckable() && m_group != NULL )
+	if( isCheckable() && m_group != nullptr )
 	{
 		if( model()->value() == false )
 		{
@@ -180,7 +179,7 @@ void AutomatableButton::toggle()
 automatableButtonGroup::automatableButtonGroup( QWidget * _parent,
 						const QString & _name ) :
 	QWidget( _parent ),
-	IntModelView( new IntModel( 0, 0, 0, NULL, _name, true ), this )
+	IntModelView( new IntModel( 0, 0, 0, nullptr, _name, true ), this )
 {
 	hide();
 	setWindowTitle( _name );
@@ -194,7 +193,7 @@ automatableButtonGroup::~automatableButtonGroup()
 	for( QList<AutomatableButton *>::iterator it = m_buttons.begin();
 					it != m_buttons.end(); ++it )
 	{
-		( *it )->m_group = NULL;
+		( *it )->m_group = nullptr;
 	}
 }
 
@@ -221,7 +220,7 @@ void automatableButtonGroup::addButton( AutomatableButton * _btn )
 void automatableButtonGroup::removeButton( AutomatableButton * _btn )
 {
 	m_buttons.erase( std::find( m_buttons.begin(), m_buttons.end(), _btn ) );
-	_btn->m_group = NULL;
+	_btn->m_group = nullptr;
 }
 
 

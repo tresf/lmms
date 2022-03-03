@@ -42,24 +42,23 @@ public:
 			const ch_cnt_t _channels,
 			bool & _success_ful,
 			const QString & _file,
-			Mixer* mixer );
+			AudioEngine* audioEngine );
 	virtual ~AudioFileOgg();
 
 	static AudioFileDevice * getInst( const QString & outputFilename,
 					  OutputSettings const & outputSettings,
 					  const ch_cnt_t channels,
-					  Mixer* mixer,
+					  AudioEngine* audioEngine,
 					  bool & successful )
 	{
-		return new AudioFileOgg( outputSettings, channels, successful,
-						outputFilename, mixer );
+		return new AudioFileOgg( outputSettings, channels, successful, outputFilename, audioEngine );
 	}
 
 
 private:
 	virtual void writeBuffer( const surroundSampleFrame * _ab,
 						const fpp_t _frames,
-						const float _master_gain );
+						const float _master_gain ) override;
 
 	bool startEncoding();
 	void finishEncoding();

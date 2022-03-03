@@ -42,23 +42,23 @@ public:
 			const ch_cnt_t _channels,
 			bool & successful,
 			const QString & _file,
-			Mixer* mixer );
+			AudioEngine* audioEngine );
 	virtual ~AudioFileMP3();
 
 	static AudioFileDevice * getInst( const QString & outputFilename,
 					  OutputSettings const & outputSettings,
 					  const ch_cnt_t channels,
-					  Mixer* mixer,
+					  AudioEngine* audioEngine,
 					  bool & successful )
 	{
 		return new AudioFileMP3( outputSettings, channels, successful,
-					 outputFilename, mixer );
+					 outputFilename, audioEngine );
 	}
 
 protected:
 	virtual void writeBuffer( const surroundSampleFrame * /* _buf*/,
 				  const fpp_t /*_frames*/,
-				  const float /*_master_gain*/ );
+				  const float /*_master_gain*/ ) override;
 
 private:
 	void flushRemainingBuffers();

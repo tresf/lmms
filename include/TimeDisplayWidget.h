@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _TIME_DISPLAY_WIDGET
-#define _TIME_DISPLAY_WIDGET
+#ifndef TIME_DISPLAY_WIDGET_H
+#define TIME_DISPLAY_WIDGET_H
 
 #include <QWidget>
 #include <QHBoxLayout>
@@ -41,7 +41,7 @@ public:
 
 
 protected:
-	virtual void mousePressEvent( QMouseEvent* mouseEvent );
+	void mousePressEvent( QMouseEvent* mouseEvent ) override;
 
 
 private slots:
@@ -67,4 +67,4 @@ private:
 
 } ;
 
-#endif
+#endif // TIME_DISPLAY_WIDGET_H

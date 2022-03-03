@@ -25,7 +25,7 @@
 #include "LocklessAllocator.h"
 
 #include <algorithm>
-#include <stdio.h>
+#include <cstdio>
 
 #include "lmmsconfig.h"
 
@@ -113,7 +113,7 @@ void * LocklessAllocator::alloc()
 		if( !available )
 		{
 			fprintf( stderr, "LocklessAllocator: No free space\n" );
-			return NULL;
+			return nullptr;
 		}
 	}
 	while (!m_available.compare_exchange_weak(available, available - 1));

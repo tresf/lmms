@@ -24,21 +24,19 @@
  */
 
 #include <QApplication>
-#include <QLayout>
-#include <QMdiSubWindow>
 #include <QPushButton>
 #include <QScrollArea>
-#include <QMdiArea>
 #include <QMessageBox>
+#include <QVBoxLayout>
 
 #include "Song.h"
 #include "embed.h"
 #include "GuiApplication.h"
 #include "MainWindow.h"
-#include "GroupBox.h"
 #include "ControllerRackView.h"
 #include "ControllerView.h"
 #include "LfoController.h"
+#include "SubWindow.h"
 
 
 ControllerRackView::ControllerRackView( ) :
@@ -75,7 +73,7 @@ ControllerRackView::ControllerRackView( ) :
 	layout->addWidget( m_addButton );
 	this->setLayout( layout );
 
-	QMdiSubWindow * subWin = gui->mainWindow()->addWindowedWidget( this );
+	QMdiSubWindow * subWin = getGUI()->mainWindow()->addWindowedWidget( this );
 
 	// No maximize button
 	Qt::WindowFlags flags = subWin->windowFlags();

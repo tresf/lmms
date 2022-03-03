@@ -25,13 +25,18 @@
 #ifndef OPULENZ_H
 #define OPULENZ_H
 
+#include <QMutex>
+
+#include "AutomatableModel.h"
 #include "Instrument.h"
 #include "InstrumentView.h"
-#include "opl.h"
 
-#include "LcdSpinBox.h"
-#include "Knob.h"
-#include "PixmapButton.h"
+class automatableButtonGroup;
+class Copl;
+class Knob;
+class LcdSpinBox;
+class PixmapButton;
+
 
 // This one is a flag, MIDI notes take 7 low bits
 #define OPL2_VOICE_FREE 128
@@ -56,7 +61,7 @@ public:
 		return IsSingleStreamed | IsMidiBased;
 	}
 
-	virtual bool handleMidiEvent( const MidiEvent& event, const MidiTime& time, f_cnt_t offset = 0 );
+	virtual bool handleMidiEvent( const MidiEvent& event, const TimePos& time, f_cnt_t offset = 0 );
 	virtual void play( sampleFrame * _working_buffer );
 
 	void saveSettings( QDomDocument & _doc, QDomElement & _this );

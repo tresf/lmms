@@ -27,7 +27,7 @@
 #define TEMPO_SYNC_KNOB_H
 
 #include <QPixmap>
-#include <QtCore/QPointer>
+#include <QPointer>
 
 #include "Knob.h"
 #include "TempoSyncKnobModel.h"
@@ -38,7 +38,7 @@ class LMMS_EXPORT TempoSyncKnob : public Knob
 {
 	Q_OBJECT
 public:
-	TempoSyncKnob( knobTypes knobNum, QWidget* parent = NULL, const QString& name = QString() );
+	TempoSyncKnob( knobTypes knobNum, QWidget* parent = nullptr, const QString& name = QString() );
 	virtual ~TempoSyncKnob();
 
 	const QString & syncDescription();
@@ -52,7 +52,7 @@ public:
 		return castModel<TempoSyncKnobModel>();
 	}
 
-	virtual void modelChanged();
+	void modelChanged() override;
 
 
 signals:
@@ -61,7 +61,7 @@ signals:
 
 
 protected:
-	virtual void contextMenuEvent( QContextMenuEvent * _me );
+	void contextMenuEvent( QContextMenuEvent * _me ) override;
 
 
 protected slots:

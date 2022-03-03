@@ -1,4 +1,5 @@
 .gitattributes export-ignore
 .gitignore export-ignore
 data/locale/* linguist-documentation
-*.svg binary
+* text=auto eol=lf
+*.{bin,bmp,flac,icns,ico,mmpz,ogg,png,xiz,xmz,wav,svg} binary

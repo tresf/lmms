@@ -44,12 +44,12 @@ class InstrumentFunctionNoteStackingView : public QWidget, public ModelView
 {
 	Q_OBJECT
 public:
-	InstrumentFunctionNoteStackingView( InstrumentFunctionNoteStacking* cc, QWidget* parent = NULL );
+	InstrumentFunctionNoteStackingView( InstrumentFunctionNoteStacking* cc, QWidget* parent = nullptr );
 	virtual ~InstrumentFunctionNoteStackingView();
 
 
 private:
-	virtual void modelChanged();
+	void modelChanged() override;
 
 	InstrumentFunctionNoteStacking * m_cc;
 
@@ -67,17 +67,18 @@ class InstrumentFunctionArpeggioView : public QWidget, public ModelView
 {
 	Q_OBJECT
 public:
-	InstrumentFunctionArpeggioView( InstrumentFunctionArpeggio* arp, QWidget* parent = NULL );
+	InstrumentFunctionArpeggioView( InstrumentFunctionArpeggio* arp, QWidget* parent = nullptr );
 	virtual ~InstrumentFunctionArpeggioView();
 
 
 private:
-	virtual void modelChanged();
+	void modelChanged() override;
 
 	InstrumentFunctionArpeggio * m_a;
 	GroupBox * m_arpGroupBox;
 	ComboBox * m_arpComboBox;
 	Knob * m_arpRangeKnob;
+	Knob * m_arpRepeatsKnob;
 	Knob * m_arpCycleKnob;
 	Knob * m_arpSkipKnob;
 	Knob * m_arpMissKnob;

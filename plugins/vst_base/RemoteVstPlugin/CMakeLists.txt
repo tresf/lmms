@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.8)
 project(RemoteVstPlugin 
 	LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 include(CheckCXXPreprocessor)
 include(CheckCXXSourceCompiles)
@@ -9,10 +9,6 @@ include(CheckCXXSourceCompiles)
 CHECK_CXX_DEFINE(IS_WIN "_WIN32")
 CHECK_CXX_DEFINE(IS_WIN64 "_WIN64")
 CHECK_CXX_DEFINE(IS_MINGW "__MINGW32__")
-
-if(NOT IS_WIN)
-	message(FATAL_ERROR "Toolchain used does not target windows.")
-ENDIF()
 
 if(IS_WIN64 OR CMAKE_SIZEOF_VOID_P EQUAL 8)
 	set(BITNESS 64)
@@ -26,12 +22,20 @@ FOREACH( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
 	SET("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG}" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 ENDFOREACH()
 
+if(NOT IS_WIN)
+set(EXE_NAME NativeLinuxRemoteVstPlugin${BITNESS})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/")
+else()
 set(EXE_NAME RemoteVstPlugin${BITNESS})
+endif()
 add_executable(${EXE_NAME} WIN32
 	../RemoteVstPlugin.cpp
 )
-
-target_link_libraries(${EXE_NAME} ole32)
+if(IS_WIN)
+    target_link_libraries(${EXE_NAME} ole32)
+else()
+    target_link_libraries(${EXE_NAME} pthread dl X11)
+ENDIF()
 
 target_include_directories(${EXE_NAME}
 	PRIVATE 
@@ -55,7 +59,7 @@ if(WIN32)
 endif()
 
 if(IS_MINGW)
-	SET(CMAKE_REQUIRED_FLAGS "-std=c++11")
+	SET(CMAKE_REQUIRED_FLAGS "-std=c++17")
 
 	CHECK_CXX_SOURCE_COMPILES("
 	#include <mutex>

@@ -25,9 +25,8 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
-#include <QtCore/QStringList>
-#include <QtCore/QMap>
-#include <QtXml/QDomDocument>
+#include <QStringList>
+#include <QMap>
 
 #include "JournallingObject.h"
 #include "Model.h"
@@ -130,7 +129,7 @@ public:
 			{
 				typedef QMap<QString, QString> AttributeMap;
 
-				inline Key( const Plugin::Descriptor * desc = NULL,
+				inline Key( const Plugin::Descriptor * desc = nullptr,
 						const QString & name = QString(),
 						const AttributeMap & am = AttributeMap()
 					)
@@ -239,7 +238,7 @@ public:
 	virtual ~Plugin();
 
 	//! Return display-name out of sub plugin or descriptor
-	virtual QString displayName() const;
+	QString displayName() const override;
 
 	//! Return logo out of sub plugin or descriptor
 	const PixmapLoader *logo() const;

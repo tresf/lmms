@@ -25,7 +25,7 @@
 #ifndef ENVELOPE_AND_LFO_PARAMETERS_H
 #define ENVELOPE_AND_LFO_PARAMETERS_H
 
-#include <QtCore/QVector>
+#include <QVector>
 
 #include "JournallingObject.h"
 #include "AutomatableModel.h"
@@ -91,9 +91,9 @@ public:
 	}
 
 
-	virtual void saveSettings( QDomDocument & _doc, QDomElement & _parent );
-	virtual void loadSettings( const QDomElement & _this );
-	virtual QString nodeName() const
+	void saveSettings( QDomDocument & _doc, QDomElement & _parent ) override;
+	void loadSettings( const QDomElement & _this ) override;
+	QString nodeName() const override
 	{
 		return "el";
 	}

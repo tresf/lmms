@@ -66,12 +66,12 @@ public:
 	typedef std::vector<DeviceInfo> DeviceInfoCollection;
 
 public:
-	AudioAlsa( bool & _success_ful, Mixer* mixer );
+	AudioAlsa( bool & _success_ful, AudioEngine* audioEngine );
 	virtual ~AudioAlsa();
 
 	inline static QString name()
 	{
-		return QT_TRANSLATE_NOOP( "setupWidget",
+		return QT_TRANSLATE_NOOP( "AudioDeviceSetupWidget",
 			"ALSA (Advanced Linux Sound Architecture)" );
 	}
 
@@ -80,10 +80,10 @@ public:
 	static DeviceInfoCollection getAvailableDevices();
 
 private:
-	virtual void startProcessing();
-	virtual void stopProcessing();
-	virtual void applyQualitySettings();
-	virtual void run();
+	void startProcessing() override;
+	void stopProcessing() override;
+	void applyQualitySettings() override;
+	void run() override;
 
 	int setHWParams( const ch_cnt_t _channels, snd_pcm_access_t _access );
 	int setSWParams();

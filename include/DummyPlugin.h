@@ -34,7 +34,7 @@ class DummyPlugin : public Plugin
 {
 public:
 	DummyPlugin() :
-		Plugin( NULL, NULL )
+		Plugin( nullptr, nullptr )
 	{
 	}
 
@@ -42,22 +42,22 @@ public:
 	{
 	}
 
-	virtual void saveSettings( QDomDocument &, QDomElement & )
+	void saveSettings( QDomDocument &, QDomElement & ) override
 	{
 	}
 
-	virtual void loadSettings( const QDomElement & )
+	void loadSettings( const QDomElement & ) override
 	{
 	}
 
-	virtual QString nodeName() const
+	QString nodeName() const override
 	{
 		return "DummyPlugin";
 	}
 
 
 protected:
-	virtual PluginView * instantiateView( QWidget * _parent )
+	PluginView * instantiateView( QWidget * _parent ) override
 	{
 		return new PluginView( this, _parent );
 	}

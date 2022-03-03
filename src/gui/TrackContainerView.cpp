@@ -24,22 +24,23 @@
 
 #include "TrackContainerView.h"
 
-#include <cmath>
 
-#include <QApplication>
 #include <QLayout>
-#include <QMdiArea>
+#include <QScrollBar>
 #include <QWheelEvent>
 
 #include "TrackContainer.h"
-#include "BBTrack.h"
+#include "AudioEngine.h"
+#include "DataFile.h"
 #include "MainWindow.h"
-#include "Mixer.h"
 #include "FileBrowser.h"
 #include "ImportFilter.h"
 #include "Instrument.h"
+#include "InstrumentTrack.h"
+#include "PatternTrack.h"
 #include "Song.h"
 #include "StringPairDrag.h"
+#include "TrackView.h"
 #include "GuiApplication.h"
 #include "PluginFactory.h"
 
@@ -47,14 +48,14 @@ using namespace std;
 
 TrackContainerView::TrackContainerView( TrackContainer * _tc ) :
 	QWidget(),
-	ModelView( NULL, this ),
+	ModelView( nullptr, this ),
 	JournallingObject(),
 	SerializingObjectHook(),
 	m_currentPosition( 0, 0 ),
 	m_tc( _tc ),
 	m_trackViews(),
 	m_scrollArea( new scrollArea( this ) ),
-	m_ppt( DEFAULT_PIXELS_PER_TACT ),
+	m_ppb( DEFAULT_PIXELS_PER_BAR ),
 	m_rubberBand( new RubberBand( m_scrollArea ) )
 {
 	m_tc->setHook( this );
@@ -122,9 +123,9 @@ TrackView * TrackContainerView::addTrackView( TrackView * _tv )
 {
 	m_trackViews.push_back( _tv );
 	m_scrollLayout->addWidget( _tv );
-	connect( this, SIGNAL( positionChanged( const MidiTime & ) ),
+	connect( this, SIGNAL( positionChanged( const TimePos & ) ),
 				_tv->getTrackContentWidget(),
-				SLOT( changePosition( const MidiTime & ) ) );
+				SLOT( changePosition( const TimePos & ) ) );
 	realignTracks();
 	return( _tv );
 }
@@ -162,7 +163,7 @@ void TrackContainerView::moveTrackView( TrackView * trackView, int indexTo )
 	int indexFrom = m_trackViews.indexOf( trackView );
 	if ( indexFrom == indexTo ) { return; }
 
-	BBTrack::swapBBTracks( trackView->getTrack(),
+	PatternTrack::swapPatternTracks( trackView->getTrack(),
 			m_trackViews[indexTo]->getTrack() );
 
 	m_scrollLayout->removeWidget( trackView );
@@ -265,9 +266,9 @@ void TrackContainerView::deleteTrackView( TrackView * _tv )
 	removeTrackView( _tv );
 	delete _tv;
 
-	Engine::mixer()->requestChangeInModel();
+	Engine::audioEngine()->requestChangeInModel();
 	delete t;
-	Engine::mixer()->doneChangeInModel();
+	Engine::audioEngine()->doneChangeInModel();
 }
 
 
@@ -291,7 +292,7 @@ const TrackView * TrackContainerView::trackViewAt( const int _y ) const
 			return( *it );
 		}
 	}
-	return( NULL );
+	return( nullptr );
 }
 
 
@@ -305,9 +306,17 @@ bool TrackContainerView::allowRubberband() const
 
 
 
-void TrackContainerView::setPixelsPerTact( int _ppt )
+bool TrackContainerView::knifeMode() const
 {
-	m_ppt = _ppt;
+	return false;
+}
+
+
+
+
+void TrackContainerView::setPixelsPerBar( int ppb )
+{
+	m_ppb = ppb;
 
 	// tell all TrackContentWidgets to update their background tile pixmap
 	for( trackViewList::Iterator it = m_trackViews.begin();
@@ -371,7 +380,7 @@ void TrackContainerView::dropEvent( QDropEvent * _de )
 		//it->toggledInstrumentTrackButton( true );
 		_de->accept();
 	}
-	else if( type == "samplefile" || type == "pluginpresetfile" 
+	else if( type == "samplefile" || type == "pluginpresetfile"
 		|| type == "soundfontfile" || type == "vstpluginfile"
 		|| type == "patchfile" )
 	{
@@ -379,7 +388,7 @@ void TrackContainerView::dropEvent( QDropEvent * _de )
 				Track::create( Track::InstrumentTrack,
 								m_tc ) );
 		PluginFactory::PluginInfoAndKey piakn =
-			pluginFactory->pluginSupportingExtension(FileItem::extension(value));
+			getPluginFactory()->pluginSupportingExtension(FileItem::extension(value));
 		Instrument * i = it->loadInstrument(piakn.info.name(), &piakn.key);
 		i->loadFile( value );
 		//it->toggledInstrumentTrackButton( true );
@@ -404,7 +413,7 @@ void TrackContainerView::dropEvent( QDropEvent * _de )
 
 	else if( type == "projectfile")
 	{
-		if( gui->mainWindow()->mayChangeProject(true) )
+		if( getGUI()->mainWindow()->mayChangeProject(true) )
 		{
 			Engine::getSong()->loadProject( value );
 		}
@@ -460,7 +469,7 @@ TrackContainerView::scrollArea::~scrollArea()
 void TrackContainerView::scrollArea::wheelEvent( QWheelEvent * _we )
 {
 	// always pass wheel-event to parent-widget (song-editor
-	// bb-editor etc.) because they might want to use it for zooming
+	// pattern-editor etc.) because they might want to use it for zooming
 	// or scrolling left/right if a modifier-key is pressed, otherwise
 	// they do not accept it and we pass it up to QScrollArea
 	m_trackContainerView->wheelEvent( _we );

@@ -23,8 +23,6 @@
  *
  */
 
-#include <QPaintEvent>
-#include <QFontMetrics>
 #include <QPainter>
 
 #include "Graph.h"
@@ -37,7 +35,7 @@ Graph::Graph( QWidget * _parent, graphStyle _style, int _width,
 		int _height ) :
 	QWidget( _parent ),
 	/* TODO: size, background? */
-	ModelView( new graphModel( -1.0, 1.0, 128, NULL, true ), this ),
+	ModelView( new graphModel( -1.0, 1.0, 128, nullptr, true ), this ),
 	m_graphStyle( _style )
 {
 	m_mouseDown = false;
@@ -235,8 +233,9 @@ void Graph::drawLineAt( int _x, int _y, int _lastx )
 		model()->drawSampleAt( sample_begin + i , val_begin + ((i ) * ystep));
 	}
 
-	
-	model()->samplesChanged( sample_begin, sample_end );
+	// We've changed [sample_end, sample_begin)
+	// However, samplesChanged expects two end points
+	model()->samplesChanged(sample_begin, sample_end - 1);
 }
 
 void Graph::changeSampleAt( int _x, int _y )

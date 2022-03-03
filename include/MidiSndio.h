@@ -30,10 +30,8 @@
 
 #ifdef LMMS_HAVE_SNDIO
 
-#include <QtCore/QThread>
-#include <QtCore/QFile>
+#include <QThread>
 
-#include <sndio.h>
 
 #include "MidiClient.h"
 
@@ -59,8 +57,8 @@ public:
 
 
 protected:
-	virtual void sendByte(const unsigned char c);
-	virtual void run(void);
+	void sendByte(const unsigned char c) override;
+	void run(void) override;
 
 private:
 	struct mio_hdl *m_hdl;

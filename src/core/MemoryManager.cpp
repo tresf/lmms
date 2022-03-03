@@ -25,7 +25,7 @@
 
 #include "MemoryManager.h"
 
-#include <QtCore/QtGlobal>
+#include <QtGlobal>
 #include "rpmalloc.h"
 
 /// Global static object handling rpmalloc intializing and finalizing
@@ -53,7 +53,7 @@ MemoryManager::ThreadGuard::ThreadGuard()
 MemoryManager::ThreadGuard::~ThreadGuard()
 {
 	if (--thread_guard_depth == 0) {
-		rpmalloc_thread_finalize();
+		rpmalloc_thread_finalize(true);
 	}
 }
 

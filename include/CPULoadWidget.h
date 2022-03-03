@@ -27,7 +27,7 @@
 #ifndef CPULOAD_WIDGET_H
 #define CPULOAD_WIDGET_H
 
-#include <QtCore/QTimer>
+#include <QTimer>
 #include <QPixmap>
 #include <QWidget>
 
@@ -43,7 +43,7 @@ public:
 
 
 protected:
-	virtual void paintEvent( QPaintEvent * _ev );
+	void paintEvent( QPaintEvent * _ev ) override;
 
 
 protected slots:

@@ -23,7 +23,8 @@
  *
  */
 
-#include <QLayout>
+
+#include <QHBoxLayout>
 
 #include "LadspaControl.h"
 #include "LadspaControlView.h"
@@ -43,7 +44,7 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 	layout->setMargin( 0 );
 	layout->setSpacing( 0 );
 
-	LedCheckBox * link = NULL;
+	LedCheckBox * link = nullptr;
 
 	if( m_ctl->m_link )
 	{
@@ -53,7 +54,7 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 		layout->addWidget( link );
 	}
 
-	Knob * knb = NULL;
+	Knob * knb = nullptr;
 
 	switch( m_ctl->port()->data_type )
 	{
@@ -63,7 +64,7 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 				m_ctl->port()->name, this, QString(), LedCheckBox::Green );
 			toggle->setModel( m_ctl->toggledModel() );
 			layout->addWidget( toggle );
-			if( link != NULL )
+			if( link != nullptr )
 			{
 				setFixedSize( link->width() + toggle->width(),
 							toggle->height() );
@@ -90,7 +91,7 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 			break;
 	}
 
-	if( knb != NULL )
+	if( knb != nullptr )
 	{
 		if( m_ctl->port()->data_type != TIME )
 		{
@@ -103,7 +104,7 @@ LadspaControlView::LadspaControlView( QWidget * _parent,
 		knb->setLabel( m_ctl->port()->name );
 		knb->setHintText( tr( "Value:" ), "" );
 		layout->addWidget( knb );
-		if( link != NULL )
+		if( link != nullptr )
 		{
 			setFixedSize( link->width() + knb->width(),
 						knb->height() );

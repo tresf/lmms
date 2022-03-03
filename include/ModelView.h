@@ -25,7 +25,7 @@
 #ifndef MODEL_VIEW_H
 #define MODEL_VIEW_H
 
-#include <QtCore/QPointer>
+#include <QPointer>
 #include "Model.h"
 
 
@@ -36,6 +36,7 @@ public:
 	virtual ~ModelView();
 
 	virtual void setModel( Model* model, bool isOldModelValid = true );
+	virtual void unsetModel();
 
 	Model* model()
 	{

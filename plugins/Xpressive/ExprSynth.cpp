@@ -27,11 +27,9 @@
 
 #include <string>
 #include <vector>
-#include <math.h>
-#include <cstdlib>
+#include <cmath>
 #include <random>
 
-#include "Xpressive.h"
 
 #include "interpolation.h"
 #include "lmms_math.h"
@@ -370,7 +368,7 @@ class ExprFrontData
 public:
 	ExprFrontData(int last_func_samples):
 	m_rand_vec(SimpleRandom::generator()),
-	m_integ_func(NULL),
+	m_integ_func(nullptr),
 	m_last_func(last_func_samples)
 	{}
 	~ExprFrontData()
@@ -670,7 +668,7 @@ size_t find_occurances(const std::string& haystack, const char* const needle)
 
 void ExprFront::setIntegrate(const unsigned int* const frameCounter, const unsigned int sample_rate)
 {
-	if (m_data->m_integ_func == NULL)
+	if (m_data->m_integ_func == nullptr)
 	{
 		const unsigned int ointeg = find_occurances(m_data->m_expression_string,"integrate");
 		if ( ointeg > 0 )

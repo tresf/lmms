@@ -22,29 +22,27 @@
  *
  */
 
-#include <QMenu>
 #include <QToolButton>
+#include <QHBoxLayout>
 #include <QLabel>
-#include <QLayout>
+#include <QVBoxLayout>
 
 #include "InstrumentMidiIOView.h"
 #include "MidiPortMenu.h"
+#include "AudioEngine.h"
 #include "Engine.h"
 #include "embed.h"
 #include "GroupBox.h"
 #include "gui_templates.h"
 #include "LcdSpinBox.h"
 #include "MidiClient.h"
-#include "Mixer.h"
-#include "InstrumentTrack.h"
-#include "LedCheckbox.h"
 
 
 InstrumentMidiIOView::InstrumentMidiIOView( QWidget* parent ) :
 	QWidget( parent ),
-	ModelView( NULL, this ),
-	m_rpBtn( NULL ),
-	m_wpBtn( NULL )
+	ModelView( nullptr, this ),
+	m_rpBtn( nullptr ),
+	m_wpBtn( nullptr )
 {
 	QVBoxLayout* layout = new QVBoxLayout( this );
 	layout->setMargin( 5 );
@@ -53,18 +51,21 @@ InstrumentMidiIOView::InstrumentMidiIOView( QWidget* parent ) :
 
 	QHBoxLayout* midiInputLayout = new QHBoxLayout( m_midiInputGroupBox );
 	midiInputLayout->setContentsMargins( 8, 18, 8, 8 );
-	midiInputLayout->setSpacing( 6 );
+	midiInputLayout->setSpacing( 4 );
 
 	m_inputChannelSpinBox = new LcdSpinBox( 2, m_midiInputGroupBox );
 	m_inputChannelSpinBox->addTextForValue( 0, "--" );
-	m_inputChannelSpinBox->setLabel( tr( "CHANNEL" ) );
+	/*: This string must be be short, its width must be less than
+	 *  width of LCD spin-box of two digits */
+	m_inputChannelSpinBox->setLabel( tr( "CHAN" ) );
 	m_inputChannelSpinBox->setEnabled( false );
 	midiInputLayout->addWidget( m_inputChannelSpinBox );
 
 	m_fixedInputVelocitySpinBox = new LcdSpinBox( 3, m_midiInputGroupBox );
-	m_fixedInputVelocitySpinBox->setDisplayOffset( 1 );
-	m_fixedInputVelocitySpinBox->addTextForValue( 0, "---" );
-	m_fixedInputVelocitySpinBox->setLabel( tr( "VELOCITY" ) );
+	m_fixedInputVelocitySpinBox->addTextForValue( -1, "---" );
+	/*: This string must be be short, its width must be less than
+	 *  width of LCD spin-box of three digits */
+	m_fixedInputVelocitySpinBox->setLabel( tr( "VELOC" ) );
 	m_fixedInputVelocitySpinBox->setEnabled( false );
 	midiInputLayout->addWidget( m_fixedInputVelocitySpinBox );
 	midiInputLayout->addStretch();
@@ -81,35 +82,39 @@ InstrumentMidiIOView::InstrumentMidiIOView( QWidget* parent ) :
 
 	QHBoxLayout* midiOutputLayout = new QHBoxLayout( m_midiOutputGroupBox );
 	midiOutputLayout->setContentsMargins( 8, 18, 8, 8 );
-	midiOutputLayout->setSpacing( 6 );
+	midiOutputLayout->setSpacing( 4 );
 
 	m_outputChannelSpinBox = new LcdSpinBox( 2, m_midiOutputGroupBox );
-	m_outputChannelSpinBox->setLabel( tr( "CHANNEL" ) );
-	m_outputChannelSpinBox->setEnabled( false );
+	m_outputChannelSpinBox->addTextForValue( 0, "--" );
+	/*: This string must be be short, its width must be less than
+	 *  width of LCD spin-box of two digits */
+	m_outputChannelSpinBox->setLabel( tr( "CHAN" ) );
 	midiOutputLayout->addWidget( m_outputChannelSpinBox );
 
 	m_fixedOutputVelocitySpinBox = new LcdSpinBox( 3, m_midiOutputGroupBox );
-	m_fixedOutputVelocitySpinBox->setDisplayOffset( 1 );
-	m_fixedOutputVelocitySpinBox->addTextForValue( 0, "---" );
-	m_fixedOutputVelocitySpinBox->setLabel( tr( "VELOCITY" ) );
+	m_fixedOutputVelocitySpinBox->addTextForValue( -1, "---" );
+	/*: This string must be be short, its width must be less than
+	 *  width of LCD spin-box of three digits */
+	m_fixedOutputVelocitySpinBox->setLabel( tr( "VELOC" ) );
 	m_fixedOutputVelocitySpinBox->setEnabled( false );
 	midiOutputLayout->addWidget( m_fixedOutputVelocitySpinBox );
 
 	m_outputProgramSpinBox = new LcdSpinBox( 3, m_midiOutputGroupBox );
-	m_outputProgramSpinBox->setLabel( tr( "PROGRAM" ) );
+	/*: This string must be be short, its width must be less than the
+	 *  width of LCD spin-box of three digits */
+	m_outputProgramSpinBox->setLabel( tr( "PROG" ) );
 	m_outputProgramSpinBox->setEnabled( false );
 	midiOutputLayout->addWidget( m_outputProgramSpinBox );
 
 	m_fixedOutputNoteSpinBox = new LcdSpinBox( 3, m_midiOutputGroupBox );
-	m_fixedOutputNoteSpinBox->setDisplayOffset( 1 );
-	m_fixedOutputNoteSpinBox->addTextForValue( 0, "---" );
+	m_fixedOutputNoteSpinBox->addTextForValue( -1, "---" );
+	/*: This string must be be short, its width must be less than
+	 *  width of LCD spin-box of three digits */
 	m_fixedOutputNoteSpinBox->setLabel( tr( "NOTE" ) );
 	m_fixedOutputNoteSpinBox->setEnabled( false );
 	midiOutputLayout->addWidget( m_fixedOutputNoteSpinBox );
 	midiOutputLayout->addStretch();
 
-	connect( m_midiOutputGroupBox->ledButton(), SIGNAL( toggled( bool ) ),
-			m_outputChannelSpinBox, SLOT( setEnabled( bool ) ) );
 	connect( m_midiOutputGroupBox->ledButton(), SIGNAL( toggled( bool ) ),
 		m_fixedOutputVelocitySpinBox, SLOT( setEnabled( bool ) ) );
 	connect( m_midiOutputGroupBox->ledButton(), SIGNAL( toggled( bool ) ),
@@ -117,7 +122,7 @@ InstrumentMidiIOView::InstrumentMidiIOView( QWidget* parent ) :
 	connect( m_midiOutputGroupBox->ledButton(), SIGNAL( toggled( bool ) ),
 		m_fixedOutputNoteSpinBox, SLOT( setEnabled( bool ) ) );
 
-	if( !Engine::mixer()->midiClient()->isRaw() )
+	if( !Engine::audioEngine()->midiClient()->isRaw() )
 	{
 		m_rpBtn = new QToolButton;
 		m_rpBtn->setMinimumSize( 32, 32 );
@@ -201,24 +206,3 @@ void InstrumentMidiIOView::modelChanged()
 	}
 }
 
-
-
-InstrumentMiscView::InstrumentMiscView(InstrumentTrack *it, QWidget *parent) :
-	QWidget( parent )
-{
-	QVBoxLayout* layout = new QVBoxLayout( this );
-	layout->setMargin( 5 );
-	m_pitchGroupBox = new GroupBox( tr ( "MASTER PITCH" ) );
-	layout->addWidget( m_pitchGroupBox );
-	QHBoxLayout* masterPitchLayout = new QHBoxLayout( m_pitchGroupBox );
-	masterPitchLayout->setContentsMargins( 8, 18, 8, 8 );
-	QLabel *tlabel = new QLabel(tr( "Enables the use of master pitch" ) );
-	m_pitchGroupBox->setModel( &it->m_useMasterPitchModel );
-	masterPitchLayout->addWidget( tlabel );
-	layout->addStretch();
-}
-
-InstrumentMiscView::~InstrumentMiscView()
-{
-
-}

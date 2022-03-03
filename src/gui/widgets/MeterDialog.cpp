@@ -24,9 +24,9 @@
  */
 
 
-#include <QLayout>
-#include <QPushButton>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QVBoxLayout>
 
 #include "MeterDialog.h"
 #include "MeterModel.h"
@@ -37,7 +37,7 @@
 
 MeterDialog::MeterDialog( QWidget * _parent, bool _simple ) :
 	QWidget( _parent ),
-	ModelView( NULL, this )
+	ModelView( nullptr, this )
 {
 	QVBoxLayout * vlayout = new QVBoxLayout( this );
 	vlayout->setSpacing( 0 );
