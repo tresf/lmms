@@ -36,7 +36,7 @@ IF(GIT_FOUND AND NOT FORCE_VERSION)
 		LIST(GET MAJ_MIN_PAT 1 MINOR_VERSION)
 		LIST(GET MAJ_MIN_PAT 2 PATCH_VERSION)
 	ENDIF()
-	# no dashes total: No dashes in latest tag, no additional commits => pre-release
+	# no dashes total: No dashes in latest tag, no additional commits => stable
 	IF(TAG_LIST_LENGTH LESS 2)
 		SET(LMMS_RELEASE_TYPE "Stable")
 	# 1 dash total: Dash in latest tag, no additional commits => pre-release
