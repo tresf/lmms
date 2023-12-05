@@ -39,13 +39,6 @@
 namespace lmms
 {
 
-QPixmap * gui::MidiClipView::s_stepBtnOn0 = nullptr;
-QPixmap * gui::MidiClipView::s_stepBtnOn200 = nullptr;
-QPixmap * gui::MidiClipView::s_stepBtnOff = nullptr;
-QPixmap * gui::MidiClipView::s_stepBtnOffLight = nullptr;
-
-
-
 MidiClip::MidiClip( InstrumentTrack * _instrument_track ) :
 	Clip( _instrument_track ),
 	m_instrumentTrack( _instrument_track ),
@@ -367,9 +360,9 @@ void MidiClip::saveSettings( QDomDocument & _doc, QDomElement & _this )
 	_this.setAttribute( "type", static_cast<int>(m_clipType) );
 	_this.setAttribute( "name", name() );
 	
-	if( usesCustomClipColor() )
+	if (const auto& c = color())
 	{
-		_this.setAttribute( "color", color().name() );
+		_this.setAttribute("color", c->name());
 	}
 	// as the target of copied/dragged MIDI clip is always an existing
 	// MIDI clip, we must not store actual position, instead we store -1
@@ -401,17 +394,12 @@ void MidiClip::loadSettings( const QDomElement & _this )
 	m_clipType = static_cast<Type>( _this.attribute( "type"
 								).toInt() );
 	setName( _this.attribute( "name" ) );
-	
-	if( _this.hasAttribute( "color" ) )
+
+	if (_this.hasAttribute("color"))
 	{
-		useCustomClipColor( true );
-		setColor( _this.attribute( "color" ) );
+		setColor(QColor{_this.attribute("color")});
 	}
-	else
-	{
-		useCustomClipColor(false);
-	}
-	
+
 	if( _this.attribute( "pos" ).toInt() >= 0 )
 	{
 		movePosition( _this.attribute( "pos" ).toInt() );
