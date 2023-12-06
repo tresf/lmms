@@ -22,11 +22,8 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Install wine
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install -f -y libc6-dev-i386 libwine-dev libwine-dev:i386
+      - name: Set up dpkg architecture
+        run: sudo dpkg --add-architecture i386
       - name: Install dependencies
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -49,10 +46,12 @@ jobs:
             libogg-dev
             libqt5x11extras5-dev
             libsamplerate0-dev
-            libsdl-dev
+            libsdl2-dev
             libsndfile1-dev
             libstk0-dev
             libvorbis-dev
+            libwine-dev
+            libwine-dev:i386
             libx11-xcb-dev
             libxcb-keysyms1-dev
             libxcb-util0-dev
