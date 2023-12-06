@@ -25,8 +25,8 @@ jobs:
       - name: Install wine
         run: |
           sudo dpkg --add-architecture i386
-          sudo apt update
-          sudo apt install --no-install-recommends libwine-dev libwine-dev:i386
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libwine-dev libwine-dev:i386
       - name: Install dependencies
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
