@@ -29,45 +29,44 @@ jobs:
         with:
           packages: >
             ca-certificates
-            software-properties-common
-            libc6-dev
             ccache
-            libxml2-utils
-            libxml-perl
-            liblist-moreutils-perl
-            qt5-default
-            qttools5-dev-tools
-            fluid
+            g++-multilib
+            gcc-multilib
             libasound2-dev
+            libc6-dev
             libc6-dev-i386
             libfftw3-dev
             libfltk1.3-dev
             libfluidsynth-dev
             libgig-dev
             libjack-jackd2-dev
-            libmp3lame-dev
             liblilv-dev
+            liblist-moreutils-perl
+            libmp3lame-dev
             libogg-dev
+            libqt5x11extras5-dev
             libsamplerate0-dev
             libsdl-dev
             libsndfile1-dev
             libstk0-dev
             libvorbis-dev
-            libxft-dev
-            libxinerama-dev
-            lv2-dev
-            portaudio19-dev
-            gcc-multilib
-            g++-multilib
-            qt5-default
-            qtbase5-dev
-            libqt5x11extras5-dev
+            libwine-dev
+            libwine-dev:i386
+            libx11-xcb-dev
             libxcb-keysyms1-dev
             libxcb-util0-dev
+            libxft-dev
+            libxinerama-dev
+            libxml-perl
+            libxml2-utils
+            lv2-dev
+            portaudio19-dev
+            qt5-default
+            qt5-default
+            qtbase5-dev
             qtbase5-private-dev
-            libx11-xcb-dev
+            qttools5-dev-tools
             stk
-            libwine-dev
             wine64-tools
           version: 1.0
       - name: Cache ccache data
