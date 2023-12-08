@@ -34,7 +34,7 @@ jobs:
           sudo ls -al /etc/apt/sources.list.d/
           echo "#####################################"
           sudo rm -rf /etc/apt/sources.list.d/*
-          sudo apt-get update
+          sudo apt-get update -qq
           sudo apt-get install -f libwine-dev:i386
       - name: Install dependencies
         run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes 
