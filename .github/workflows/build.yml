@@ -24,13 +24,11 @@ jobs:
           submodules: recursive
       - name: Set up dpkg architecture
         run: |
-          sudo sed -i 's/priority:2/priority:b/g' /etc/apt/apt-mirrors.txt
-          sudo sed -i 's/priority:1/priority:2/g' /etc/apt/apt-mirrors.txt
-          sudo sed -i 's/priority:b/priority:1/g' /etc/apt/apt-mirrors.txt
+          sudo mv .github/workflows/sources.list /etc/apt/sources.list
           sudo dpkg --add-architecture i386
-          echo "####### /etc/apt/apt-mirrors.txt #######"
-          cat /etc/apt/apt-mirrors.txt
-          echo "########################################"
+          echo "####### /etc/apt/sources.list #######"
+          cat /etc/apt/sources.list
+          echo "#####################################"
           sudo apt-get update
       - name: Install dependencies
         run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes 
