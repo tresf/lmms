@@ -28,6 +28,8 @@ jobs:
           sudo dpkg --add-architecture i386
           echo "####### /etc/apt/sources.list #######"
           cat /etc/apt/sources.list
+          echo "######## ls -al /etc/apt/ ###########"
+          cat ls -al /etc/apt/
           echo "#####################################"
           sudo apt-get update
       - name: Install dependencies
