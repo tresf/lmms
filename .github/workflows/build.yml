@@ -27,6 +27,7 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt-get update
           cat /etc/apt/sources.list
+          cat /etc/apt/apt-mirrors.txt
           sudo apt-get install libwine:i386 libwine-dev:i386
       - name: Install dependencies
         run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes 
