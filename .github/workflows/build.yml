@@ -24,18 +24,9 @@ jobs:
           submodules: recursive
       - name: Set up dpkg architecture
         run: |
-          sudo mv .github/workflows/sources.list /etc/apt/sources.list
           sudo dpkg --add-architecture i386
-          echo "####### /etc/apt/sources.list #######"
-          cat /etc/apt/sources.list
-          echo "######## ls -al /etc/apt/ ###########"
-          sudo ls -al /etc/apt/
-          echo "######## ls -al /etc/apt/sources.list.d/ ###########"
-          sudo ls -al /etc/apt/sources.list.d/
-          echo "#####################################"
-          sudo rm -rf /etc/apt/sources.list.d/*
           sudo apt-get update -qq
-          sudo apt-get install --allow-downgrades wine32
+          sudo apt-get install -yqq --allow-downgrades libc6:i386 libgcc-s1:i386 libstdc++6:i386
       - name: Install dependencies
         run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes 
       - name: Cache ccache data
