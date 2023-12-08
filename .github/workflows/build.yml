@@ -23,9 +23,12 @@ jobs:
           fetch-depth: 0
           submodules: recursive
       - name: Set up dpkg architecture
-        run: sudo dpkg --add-architecture i386 && sudo apt-get update
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install --ignore-depends libwine:i386 libwine-dev:i386
       - name: Install dependencies
-        run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes
+        run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes 
       - name: Cache ccache data
         uses: actions/cache@v3
         with:
