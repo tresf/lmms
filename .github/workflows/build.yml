@@ -29,7 +29,7 @@ jobs:
           echo "####### /etc/apt/sources.list #######"
           cat /etc/apt/sources.list
           echo "######## ls -al /etc/apt/ ###########"
-          ls -al /etc/apt/
+          sudo ls -al /etc/apt/
           echo "#####################################"
           sudo apt-get update
       - name: Install dependencies
