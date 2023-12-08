@@ -28,6 +28,9 @@ jobs:
           sudo sed -i 's/priority:1/priority:2/g' /etc/apt/apt-mirrors.txt
           sudo sed -i 's/priority:b/priority:1/g' /etc/apt/apt-mirrors.txt
           sudo dpkg --add-architecture i386
+          echo "####### /etc/apt/apt-mirrors.txt #######"
+          cat /etc/apt/apt-mirrors.txt
+          echo "########################################"
           sudo apt-get update
       - name: Install dependencies
         run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes 
