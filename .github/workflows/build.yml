@@ -30,6 +30,8 @@ jobs:
           cat /etc/apt/sources.list
           echo "######## ls -al /etc/apt/ ###########"
           sudo ls -al /etc/apt/
+          echo "######## ls -al /etc/apt/sources.list.d/ ###########"
+          sudo ls -al /etc/apt/sources.list.d/
           echo "#####################################"
           sudo apt-get update
       - name: Install dependencies
