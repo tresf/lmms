@@ -35,6 +35,7 @@ jobs:
           echo "#####################################"
           sudo rm -rf /etc/apt/sources.list.d/*
           sudo apt-get update
+          sudo apt-get install libwine-dev:i386
       - name: Install dependencies
         run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes 
       - name: Cache ccache data
