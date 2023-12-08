@@ -26,7 +26,7 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install --ignore-depends libwine:i386 libwine-dev:i386
+          sudo apt-get install --nodeps libwine:i386 libwine-dev:i386
       - name: Install dependencies
         run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes 
       - name: Cache ccache data
