@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
           submodules: recursive
       - name: Set up dpkg architecture
-        run: sudo dpkg --add-architecture i386
+        run: sudo dpkg --add-architecture i386 && sudo apt-get update
       - name: Install dependencies
         run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes
       - name: Cache ccache data
