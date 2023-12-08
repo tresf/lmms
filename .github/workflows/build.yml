@@ -29,8 +29,6 @@ jobs:
           sudo sed -i 's/priority:b/priority:1/g' /etc/apt/apt-mirrors.txt
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          cat /etc/apt/sources.list
-          sudo apt-get install libwine:i386 libwine-dev:i386
       - name: Install dependencies
         run: xargs -a .github/workflows/deps-linux-x86_64.txt sudo apt-get install --yes 
       - name: Cache ccache data
