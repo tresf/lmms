@@ -1,5 +1,8 @@
 if(NOT NTK_FOUND)
 	return()
+else()
+	# Tell Zyn to build with NTK instead of FLTK
+	add_definitions(-DNTK_GUI)
 endif()
 
 INCLUDE(BuildPlugin)

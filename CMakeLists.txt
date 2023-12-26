@@ -535,6 +535,7 @@ pkg_check_modules(NTK ntk)
 IF(NTK_FOUND)
 	SET(STATUS_ZYN "OK")
 	SET(NTK_FLUID_EXECUTABLE "${NTK_PREFIX}/bin/ntk-fluid")
+	# But... why?
 	SET(FLTK_FLUID_EXECUTABLE "${NTK_FLUID_EXECUTABLE}")
 ELSE()
 	SET(STATUS_ZYN "not found, please install ntk")
