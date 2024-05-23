@@ -184,20 +184,15 @@ jobs:
                   path: ~/Library/Caches/ccache
           -   name: Install dependencies
               run: |
-                  wget -O $HOME/wrongbrew.sh https://gist.github.com/tresf/9a45e1400a91f4c9c14a2240967094ff/raw/wrongbrew.sh 
-                  chmod +x $HOME/wrongbrew.sh
-                  brew install cmake qt@5 fltk curl ccache
-                  $HOME/wrongbrew.sh install curl
-                  mv "$("$HOME/wrongbrew.sh" --prefix curl)"  "$("$HOME/wrongbrew.sh" --prefix curl)_x86_64"
-                  ln -s "$(brew --prefix curl)" "$("$HOME/wrongbrew.sh" --prefix curl)"
-                  $HOME/wrongbrew.sh bundle install
-                  mv "$("$HOME/wrongbrew.sh" --prefix qt@5)/bin"  "$("$HOME/wrongbrew.sh" --prefix qt@5)/x86_64_bin"
-                  ln -s "$(brew --prefix qt@5)/bin" "$("$HOME/wrongbrew.sh" --prefix qt@5)/bin"
-                  mv "$("$HOME/wrongbrew.sh" --prefix fltk)/bin"  "$("$HOME/wrongbrew.sh" --prefix fltk)/x86_64_bin"
-                  ln -s "$(brew --prefix fltk)/bin" "$("$HOME/wrongbrew.sh" --prefix fltk)/bin"
-                  mv "$("$HOME/wrongbrew.sh" --prefix pkg-config)/bin"  "$("$HOME/wrongbrew.sh" --prefix pkg-config)/x86_64_bin"
-                  ln -s "$(brew --prefix pkg-config)/bin" "$("$HOME/wrongbrew.sh" --prefix pkg-config)/bin"
-                  ln -s "$(brew --prefix curl)" "$("$HOME/wrongbrew.sh" --prefix curl)"
+                  wget -O ~/wrongbrew.sh https://gist.github.com/tresf/9a45e1400a91f4c9c14a2240967094ff/raw/wrongbrew.sh 
+                  chmod +x ~/wrongbrew.sh
+                  brew install ccache
+                  ~/wrongbrew.sh install curl
+                  ~/wrongbrew.sh fixbin qt@curl
+                  ~/wrongbrew.sh bundle install
+                  ~/wrongbrew.sh fixbin qt@5
+                  ~/wrongbrew.sh fixbin fltk
+                  ~/wrongbrew.sh fixbin pkg-config
                   npm update -g npm
                   npm install --location=global appdmg
               env:
@@ -208,10 +203,11 @@ jobs:
               run: |
                   ccache --zero-stats
                   mkdir build
+                  export PKG_CONFIG_PATH="$(~/wrongbrew.sh --prefix)/lib/pkgconfig"
                   cmake -S . \
                         -B build \
                         -DCMAKE_INSTALL_PREFIX="../target" \
-                        -DCMAKE_PREFIX_PATH=$($HOME/wrongbrew.sh --prefix qt@5);$($HOME/wrongbrew.sh --prefix) \
+                        -DCMAKE_PREFIX_PATH=$(~/wrongbrew.sh --prefix qt@5);$(~/wrongbrew.sh --prefix) \
                         $CMAKE_OPTS \
                         -DUSE_WERROR=OFF
           -   name: Build
