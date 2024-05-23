@@ -188,7 +188,7 @@ jobs:
                   chmod +x ~/wrongbrew.sh
                   brew install ccache
                   ~/wrongbrew.sh install curl
-                  ~/wrongbrew.sh fixbin qt@curl
+                  ~/wrongbrew.sh fixbin curl
                   ~/wrongbrew.sh bundle install
                   ~/wrongbrew.sh fixbin qt@5
                   ~/wrongbrew.sh fixbin fltk
