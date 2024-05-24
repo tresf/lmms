@@ -185,13 +185,12 @@ jobs:
               run: |
                   wget -O ~/wrongbrew.sh https://gist.github.com/tresf/9a45e1400a91f4c9c14a2240967094ff/raw/wrongbrew.sh 
                   chmod +x ~/wrongbrew.sh
-                  brew install ccache
-                  ~/wrongbrew.sh install curl
-                  ~/wrongbrew.sh fixbin curl
+                  ~/wrongbrew.sh install-fixbin ccache
+                  ~/wrongbrew.sh install-fixbin curl
                   ~/wrongbrew.sh bundle install
-                  ~/wrongbrew.sh fixbin qt@5
-                  ~/wrongbrew.sh fixbin fltk
-                  ~/wrongbrew.sh fixbin pkg-config
+                  ~/wrongbrew.sh install-fixbin qt@5
+                  ~/wrongbrew.sh install-fixbin fltk
+                  ~/wrongbrew.sh install-fixbin pkg-config
                   npm update -g npm
                   npm install --location=global appdmg
               env:
@@ -202,7 +201,6 @@ jobs:
               run: |
                   ccache --zero-stats
                   mkdir build
-                  export PKG_CONFIG_PATH="$(~/wrongbrew.sh --prefix)/lib/pkgconfig"
                   cmake -S . \
                         -B build \
                         -DCMAKE_INSTALL_PREFIX="../target" \
