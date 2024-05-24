@@ -9,6 +9,7 @@ jobs:
       name: macos-arm
       runs-on: macos-12
       env:
+          CMAKE_OSX_ARCHITECTURES: arm64
           CMAKE_OPTS: >-
               -DUSE_WERROR=ON
               -DCMAKE_BUILD_TYPE=RelWithDebInfo
