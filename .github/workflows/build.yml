@@ -61,13 +61,8 @@ jobs:
                   # ccache --zero-stats
                   mkdir build
           -   name: Configure
-              run: >-
-                cmake . -DCMAKE_APPLE_SILICON_PROCESSOR=arm64
-                #-DCMAKE_INSTALL_PREFIX="../target"
-                #-DCMAKE_OSX_ARCHITECTURES=arm64
-                #-DCMAKE_PREFIX_PATH="$(~/wrongbrew.sh --prefix);$(~/wrongbrew.sh --prefix qt@5)"
-                #$CMAKE_OPTS
-                #-DUSE_WERROR=OFF
+              run: |
+                cmake . -DCMAKE_APPLE_SILICON_PROCESSOR=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -DCMAKE_OSX_ARCHITECTURES=arm64
           -   name: Build
               run: cmake --build build
           -   name: Package
