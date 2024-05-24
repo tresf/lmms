@@ -197,16 +197,18 @@ jobs:
                   HOMEBREW_NO_AUTO_UPDATE: 1
                   HOMEBREW_NO_INSTALL_UPGRADE: 1
                   HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
-          -   name: Configure
+          -   name: Preconfigure
               run: |
                   ccache --zero-stats
                   mkdir build
-                  cmake -S . \
-                    -B build \
-                    -DCMAKE_INSTALL_PREFIX="../target" \
-                    -DCMAKE_APPLE_SILICON_PROCESSOR=arm64 \
-                    -DCMAKE_PREFIX_PATH="$(~/wrongbrew.sh --prefix);$(~/wrongbrew.sh --prefix qt@5)" \
-                    $CMAKE_OPTS \
+          -   name: Configure
+              run: >-
+                  cmake -S .
+                    -B build
+                    -DCMAKE_INSTALL_PREFIX="../target"
+                    -DCMAKE_APPLE_SILICON_PROCESSOR=arm64
+                    -DCMAKE_PREFIX_PATH="$(~/wrongbrew.sh --prefix);$(~/wrongbrew.sh --prefix qt@5)"
+                    $CMAKE_OPTS
                     -DUSE_WERROR=OFF
           -   name: Build
               run: cmake --build build
