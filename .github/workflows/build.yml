@@ -58,7 +58,7 @@ jobs:
                   HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
           -   name: Preconfigure
               run: |
-                  ccache --zero-stats
+                  # ccache --zero-stats
                   mkdir build
           -   name: Configure
               run: >-
@@ -81,11 +81,11 @@ jobs:
                   path: build/lmms-*.dmg
           -   name: Trim ccache and print statistics
               run: |
-                  ccache --cleanup
-                  echo "[ccache config]"
-                  ccache --show-config
-                  echo "[ccache stats]"
-                  ccache --show-stats --verbose
+                  # ccache --cleanup
+                  # echo "[ccache config]"
+                  # ccache --show-config
+                  # echo "[ccache stats]"
+                  # ccache --show-stats --verbose
               env:
                   CCACHE_MAXSIZE: 500MB
           -   name: Save Homebrew download cache
