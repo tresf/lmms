@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/doc/wiki" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/CarlaBase/carla" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/CarlaBase/carla/source/native-plugins/external" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/FreeBoy/game-music-emu" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/LadspaEffect/calf/veal" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/LadspaEffect/cmt/cmt" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/LadspaEffect/swh/ladspa" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/LadspaEffect/tap/tap-plugins" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/OpulenZ/adplug" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/Sid/resid/resid" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/Xpressive/exprtk" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/ZynAddSubFx/zynaddsubfx" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/ZynAddSubFx/zynaddsubfx/instruments" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/3rdparty/hiir/hiir" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/3rdparty/jack2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/3rdparty/mingw-std-threads" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/3rdparty/qt5-x11embed" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/3rdparty/qt5-x11embed/3rdparty/ECM" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/3rdparty/ringbuffer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/3rdparty/weakjack/weakjack" vcs="Git" />
+  </component>
+</project>
