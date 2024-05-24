@@ -9,7 +9,6 @@ jobs:
       name: macos-arm
       runs-on: macos-latest
       env:
-          CMAKE_OSX_ARCHITECTURES: arm64
           CMAKE_OPTS: >-
               -DUSE_WERROR=ON
               -DCMAKE_BUILD_TYPE=RelWithDebInfo
@@ -63,7 +62,7 @@ jobs:
                   mkdir build
           -   name: Configure
               run: |
-                cmake . -DCMAKE_SYSTEM_PROCESSOR=arm64 -DCMAKE_APPLE_SILICON_PROCESSOR=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -DCMAKE_OSX_ARCHITECTURES=arm64 -DOSX_ARCHITECTURES_DEBUG=arm64
+                cmake . -DCMAKE_OSX_ARCHITECTURES=arm64
           -   name: Build
               run: cmake --build build
           -   name: Package
