@@ -154,8 +154,6 @@ jobs:
               -DUSE_WERROR=ON
               -DCMAKE_BUILD_TYPE=RelWithDebInfo
               -DUSE_COMPILE_CACHE=ON
-              -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY
-              -DCMAKE_APPLE_SILICON_PROCESSOR=arm64
           CCACHE_MAXSIZE: 0
           CCACHE_NOCOMPRESS: 1
           MAKEFLAGS: -j3
@@ -192,8 +190,6 @@ jobs:
                   ~/wrongbrew.sh fixbin curl
                   ~/wrongbrew.sh bundle install
                   ~/wrongbrew.sh fixbin qt@5
-                  ~/wrongbrew.sh fixbin fltk
-                  ~/wrongbrew.sh fixbin pkg-config
                   npm update -g npm
                   npm install --location=global appdmg
               env:
@@ -208,8 +204,7 @@ jobs:
                   cmake -S . \
                         -B build \
                         -DCMAKE_INSTALL_PREFIX="../target" \
-                        -DCMAKE_PREFIX_PATH=$(~/wrongbrew.sh --prefix qt@5);$(~/wrongbrew.sh --prefix) \
-                        -DCMAKE_FIND_ROOT_PATH=$(~/wrongbrew --prefix)
+                        -DCMAKE_TOOLCHAIN_FILE="../cmake/toolchains/Apple-Arm64.cmake"
                         $CMAKE_OPTS \
                         -DUSE_WERROR=OFF
           -   name: Build
