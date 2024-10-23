@@ -64,6 +64,70 @@ jobs:
           ccache --show-stats
         env:
           CCACHE_MAXSIZE: 500M
+  linux-aarch64:
+    name: linux-aarch64
+    runs-on: ubuntu-22.04-arm64
+    env:
+      CMAKE_OPTS: >-
+        -DUSE_WERROR=ON
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        -DUSE_COMPILE_CACHE=ON
+      CCACHE_MAXSIZE: 0
+      CCACHE_NOCOMPRESS: 1
+      MAKEFLAGS: -j2
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get install -y libsndfile1-dev libfftw3-dev libvorbis-dev \
+              libogg-dev libmp3lame-dev libasound2-dev libjack-jackd2-dev \
+              libsamplerate0-dev libsdl2-dev libstk0-dev stk libfluidsynth-dev \
+              portaudio19-dev libfltk1.3-dev libxinerama-dev libxft-dev libgig-dev \
+              perl libxml2-utils libxml-perl liblist-moreutils-perl qtbase5-dev \
+              qtbase5-private-dev qttools5-dev-tools qttools5-dev libqt5x11extras5-dev \
+              libx11-xcb-dev libxcb-keysyms1-dev libxcb-util0-dev
+      - name: Configure git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Check out
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Cache ccache data
+        uses: actions/cache@v3
+        with:
+          key: ccache-${{ github.job }}-${{ github.ref }}-${{ github.run_id }}
+          restore-keys: |
+            ccache-${{ github.job }}-${{ github.ref }}-
+            ccache-${{ github.job }}-
+          path: ~/.ccache
+      - name: Configure
+        run: |
+          ccache --zero-stats
+          cmake -S . \
+                -B build \
+                $CMAKE_OPTS
+      - name: Build
+        run: cmake --build build
+      - name: Run tests
+        run: |
+          cd build/tests
+          ctest --output-on-failure -j2
+      - name: Package
+        run: |
+          cmake --build build --target package
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: build/lmms-*.AppImage
+      - name: Trim ccache and print statistics
+        run: |
+          ccache --cleanup
+          echo "[ccache config]"
+          ccache --show-config
+          echo "[ccache stats]"
+          ccache --show-stats
+        env:
+          CCACHE_MAXSIZE: 500M
   macos:
     strategy:
       fail-fast: false
