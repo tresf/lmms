@@ -359,7 +359,7 @@ jobs:
           path: ~\AppData\Local\ccache
       - name: Configure
         run: |
-          ccache --zero-stats
+          /clang64/bin/ccache.exe --zero-stats
           cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DUSE_COMPILE_CACHE=ON
       - name: Build
         run: cmake --build build
@@ -372,10 +372,10 @@ jobs:
           path: build\lmms-*.exe
       - name: Trim ccache and print statistics
         run: |
-          ccache --cleanup
+          /clang64/bin/ccache.exe --cleanup
           echo "[ccache config]"
-          ccache --show-config
+          /clang64/bin/ccache.exe --show-config
           echo "[ccache stats]"
-          ccache --show-stats --verbose
+          /clang64/bin/ccache.exe --show-stats --verbose
         env:
           CCACHE_MAXSIZE: 500MB

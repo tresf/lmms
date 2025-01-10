@@ -17,6 +17,7 @@ mingw-w64-clang-aarch64-lv2
 mingw-w64-clang-aarch64-qt5-base
 mingw-w64-clang-aarch64-suil
 mingw-w64-clang-x86_64-nsis
+mingw-w64-clang-x86_64-ccache
 msys2-runtime
 perl-List-MoreUtils
 perl-XML-Parser
