@@ -319,7 +319,7 @@ jobs:
           ccache --show-stats --verbose
         env:
           CCACHE_MAXSIZE: 500MB
-msys2:
+  msys2:
     name: msys2-clangarm64
     runs-on: windows-latest
     defaults:
