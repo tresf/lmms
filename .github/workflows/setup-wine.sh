@@ -1,7 +1,11 @@
 #!/bin/sh
 
+# Enable i386 packages on x86_64 for 32-bit VST support
+if [ "$(uname -m)" == "x86_64" ]; then
+  sudo dpkg --add-architecture i386
+fi
+
 # Add WineHQ APT repo
-sudo dpkg --add-architecture i386
 sudo apt-get install --yes wget
 sudo mkdir -pm755 /etc/apt/keyrings
 sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
