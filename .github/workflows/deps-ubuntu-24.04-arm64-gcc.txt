@@ -26,6 +26,7 @@ libsndfile1-dev
 libstk-dev
 libsuil-dev
 libvorbis-dev
+libwine-dev
 libx11-xcb-dev
 libxcb-keysyms1-dev
 libxcb-util0-dev
@@ -47,5 +48,4 @@ software-properties-common
 ssh-client
 stk
 wget
-winehq-staging
-wine-staging-dev
+wine64-tools

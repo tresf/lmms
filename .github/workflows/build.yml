@@ -83,12 +83,10 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Prepare to install system packages
-        run: |
-          echo "APT_DEPENDENCIES=$(xargs < .github/workflows/deps-ubuntu-24.04-arm64-gcc.txt)" >> "$GITHUB_ENV"
-          .github/workflows/setup-wine.sh
       - name: Install system packages
-        run: sudo apt-get install -y ${{ env.APT_DEPENDENCIES }}
+        run: |
+          sudo apt-get install -y -no-install-recommends \
+            $(xargs < .github/workflows/deps-ubuntu-24.04-arm64-gcc.txt)
       - name: Cache ccache data
         uses: actions/cache@v3
         with:
