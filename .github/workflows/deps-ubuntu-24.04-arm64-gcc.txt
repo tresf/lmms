@@ -5,11 +5,9 @@ cmake
 file
 fluid
 gcc
-gcc-multilib
 git
 gpg
 g++
-g++-multilib
 libasound2-dev
 libc6-dev
 libfftw3-dev

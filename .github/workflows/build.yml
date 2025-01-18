@@ -5,8 +5,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  linux-x64:
-    name: linux-x64
+  linux-x86_64:
+    name: linux-x86_64
     runs-on: ubuntu-latest
     container: ghcr.io/lmms/linux.gcc:20.04
     env:
