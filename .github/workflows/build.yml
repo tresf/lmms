@@ -86,7 +86,7 @@ jobs:
       - name: Install system packages
         run: |
           sudo apt-get install -y --no-install-recommends \
-            $(xargs < .github/workflows/deps-ubuntu-24.04-arm64-gcc.txt)
+            $(xargs < .github/workflows/deps-ubuntu-24.04-gcc.txt)
       - name: Cache ccache data
         uses: actions/cache@v3
         with:
@@ -100,7 +100,6 @@ jobs:
           ccache --zero-stats
           cmake -S . \
                 -B build \
-                -DCMAKE_INSTALL_PREFIX=./build/install \
                 $CMAKE_OPTS
       - name: Build
         run: cmake --build build
