@@ -83,9 +83,4 @@ ENDIF()
 FILE(COPY nsis_branding.bmp DESTINATION .)
 FILE(COPY icon.ico DESTINATION .)
 
-FILE(COPY assets/ DESTINATION assets/)
-FILE(COPY lmms.VisualElementsManifest.xml DESTINATION .)
-
 INSTALL(FILES "lmms.exe.manifest" DESTINATION .)
-INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/lmms.VisualElementsManifest.xml" DESTINATION .)
-INSTALL(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/assets" DESTINATION .)
