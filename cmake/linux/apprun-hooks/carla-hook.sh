@@ -2,6 +2,7 @@
 
 # Workaround nuances with carla being an optional-yet-hard-linked plugin
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+ME="$( basename "${BASH_SOURCE[0]}")"
 CARLA_LIB="libcarla_native-plugin.so"
 KNOWN_LOCATIONS=("lib" "lib64")
 
@@ -17,12 +18,12 @@ if command -v carla > /dev/null 2>&1; then
 			# Add library to LD_PRELOAD so libcarlabase.so can find it
 			carla_lib_found=true
 			export LD_PRELOAD="$CARLA_PREFIX/$lib/carla/${CARLA_LIB}:$LD_PRELOAD"
-			echo "Carla appears to be installed on this system at $CARLA_PREFIX/$lib so we'll use it." >&2
+			echo "[$ME] Carla appears to be installed on this system at $CARLA_PREFIX/$lib/carla so we'll use it." >&2
 			break
 		fi
 	done
 else
-	echo "Carla does not appear to be installed.  That's OK, please ignore any related library errors." >&2
+	echo "[$ME] Carla does not appear to be installed.  That's OK, please ignore any related library errors." >&2
 fi
 
 # Additional workarounds for library conflicts
@@ -43,13 +44,13 @@ if [ "$carla_lib_found" = true ]; then
 					conflict_sys="$("$cmd" -p |grep "$(arch)" |grep "$conflict" |head -n 1 |awk '{print $4}')"
 					if [ -e "$conflict_sys" ]; then
 						# Add library to LD_PRELOAD so lmms can find it over its bundled version
-						echo "Preferring the system's $conflict over the version we bundle." >&2
+						echo "[$ME] Preferring the system's $conflict over the version we bundle." >&2
 						export LD_PRELOAD="$conflict_sys:$LD_PRELOAD"
 					fi
 				fi
 			fi
 		done
 	else
-		echo "Unable to locate ldconfig, skipping workaround for" "${KNOWN_CONFLICTS[@]}" >&2
+		echo "[$ME] Unable to locate ldconfig, skipping workaround for" "${KNOWN_CONFLICTS[@]}" >&2
 	fi
 fi
