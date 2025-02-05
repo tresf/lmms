@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Workaround nuances with carla being an optional-yet-hard-linked plugin
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 CARLA_LIB="libcarla_native-plugin.so"
 KNOWN_LOCATIONS=("lib" "lib64")
 

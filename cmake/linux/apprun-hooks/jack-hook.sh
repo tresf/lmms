@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Workaround crash when jack is missing by providing a dummy version
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 if ldconfig -p | grep libjack.so.0 > /dev/null 2>&1; then
    echo "Jack appears to be installed on this system, so we'll use it." >&2
 else
