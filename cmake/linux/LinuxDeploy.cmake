@@ -121,7 +121,7 @@ set(ENV{DISABLE_COPYRIGHT_FILES_DEPLOYMENT} 1)
 file(APPEND "${DESKTOP_FILE}" "X-AppImage-Version=${CPACK_PROJECT_VERSION}\n")
 
 # Custom scripts to run just before lmms is executed
-file(COPY "{CPACK_SOURCE_DIR}/cmake/linux/apprun-hooks" DESTINATION "${APP}/apprun-hooks/")
+file(COPY "{CPACK_SOURCE_DIR}/cmake/linux/apprun-hooks" DESTINATION "${APP}")
 
 # Prefer a hard-copy of .DirIcon over appimagetool's symlinking
 # 256x256 default for Cinnamon Desktop https://forums.linuxmint.com/viewtopic.php?p=2585952
