@@ -6,28 +6,30 @@ CARLA_LIB="libcarla_native-plugin.so"
 KNOWN_LOCATIONS=("lib" "lib64")
 
 # Check for carla at "known" locations
-carla_found=false
+carla_lib_found=false
 if command -v carla > /dev/null 2>&1; then
 	CARLA_PATH="$(command -v carla)"
 	CARLA_PREFIX="${CARLA_PATH%/bin*}"
 
 	# Look for libcarla_native-plugin.so in adjacent lib directory
-    for lib in "${KNOWN_LOCATIONS[@]}"; do
+	for lib in "${KNOWN_LOCATIONS[@]}"; do
 		if [ -e "$CARLA_PREFIX/$lib/carla/$CARLA_LIB" ]; then
 			# Add library to LD_PRELOAD so libcarlabase.so can find it
-			carla_found=true
+			carla_lib_found=true
 			export LD_PRELOAD="$CARLA_PREFIX/$lib/carla/:$LD_PRELOAD"
 			echo "Carla appears to be installed on this system at $CARLA_PREFIX/$lib so we'll use it." >&2
 			break
 		fi
-    done
+	done
+else
+	echo "Carla does not appear to be installed.  That's OK, please ignore any related library errors." >&2
 fi
 
 # Additional workarounds for library conflicts
 # libgobject has been versioned "2.0" for over 20 years, but the ABI is constantly changing
 KNOWN_CONFLICTS=("libgobject-2.0.so.0")
 KNOWN_LDCONFIG=("ldconfig" "/sbin/ldconfig")
-if [ "$carla_found" = true ]; then
+if [ "$carla_lib_found" = true ]; then
 	# ldconfig may be in /sbin, see https://github.com/LMMS/lmms/issues/4846
 	for cmd in "${KNOWN_LDCONFIG[@]}"; do
 		ldconfig_path="$cmd"
@@ -50,5 +52,4 @@ if [ "$carla_found" = true ]; then
 	else
 		echo "Unable to locate ldconfig, skipping workaround for" "${KNOWN_CONFLICTS[@]}" >&2
 	fi
-
 fi
