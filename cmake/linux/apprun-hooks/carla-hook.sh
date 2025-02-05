@@ -44,7 +44,7 @@ if [ "$carla_lib_found" = true ]; then
 					conflict_sys="$("$cmd" -p |grep "$(arch)" |grep "$conflict" |head -n 1 |awk '{print $4}')"
 					if [ -e "$conflict_sys" ]; then
 						# Add library to LD_PRELOAD so lmms can find it over its bundled version
-						echo "[$ME] Preferring the system's $conflict over the version we bundle." >&2
+						echo "[$ME] Preferring the system's \"$conflict\" over the version bundled." >&2
 						export LD_PRELOAD="$conflict_sys:$LD_PRELOAD"
 					fi
 				fi
