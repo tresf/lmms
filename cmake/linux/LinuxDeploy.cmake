@@ -123,7 +123,7 @@ set(ENV{DISABLE_COPYRIGHT_FILES_DEPLOYMENT} 1)
 # Patch desktop file
 file(APPEND "${DESKTOP_FILE}" "X-AppImage-Version=${CPACK_PROJECT_VERSION}\n")
 
-# Custom scripts to run just before lmms is executed
+# Custom scripts to run immediately before lmms is executed
 file(COPY "${CPACK_SOURCE_DIR}/cmake/linux/apprun-hooks" DESTINATION "${APP}")
 file(REMOVE "${APP}/apprun-hooks/README.md")
 
