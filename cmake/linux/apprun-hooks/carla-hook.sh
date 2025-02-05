@@ -17,7 +17,7 @@ if command -v carla > /dev/null 2>&1; then
 		if [ -e "$CARLA_PREFIX/$lib/carla/$CARLA_LIB" ]; then
 			# Add library to LD_PRELOAD so libcarlabase.so can find it
 			carla_lib_found=true
-			export LD_PRELOAD="$CARLA_PREFIX/$lib/carla/${CARLA_LIB}:$LD_PRELOAD"
+			export LD_LIBRARY_PATH="$CARLA_PREFIX/$lib/carla/:$LD_LIBRARY_PATH"
 			echo "[$ME] Carla appears to be installed on this system at $CARLA_PREFIX/$lib/carla so we'll use it." >&2
 			break
 		fi
