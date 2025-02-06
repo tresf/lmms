@@ -12,6 +12,13 @@ function(svg_convert size_list source_file output_pattern)
 		set(working_directory "${CMAKE_CURRENT_BINARY_DIR}")
 	endif()
 
+	if(CPACK_SOURCE_DIR)
+		# Support calling from CPACK
+		set(source_directory "${CPACK_SOURCE_DIR}")
+	else()
+		set(source_directory "${CMAKE_SOURCE_DIR}")
+	endif()
+
 	if(DEFINED ENV{WANT_DEBUG_BRANDING})
 		set(WANT_DEBUG_BRANDING ON)
 	endif()
@@ -26,9 +33,25 @@ function(svg_convert size_list source_file output_pattern)
 			message(FATAL_ERROR "SVG file does not exist: ${source_file}")
 		endif()
 		#find_best_tool()
-		rsvg_convert("${source_file}" ${size} "${working_directory}" "${output_pattern}" ${COMMAND_ECHO} png_rendered)
+		#rsvg_convert("${source_file}" ${size} "${working_directory}" "${output_pattern}" ${COMMAND_ECHO} png_rendered)
 		#inkscape_convert("${source_file}" ${size} "${working_directory}" "${output_pattern}" ${COMMAND_ECHO} png_rendered)
-		message(STATUS " svg_convert: ${source_file} --> ${png_rendered}")
+
+
+		foreach(tool rsvg;inkscape;gimp) # FIXME: Remove, this is just for unit testing
+
+		cmake_language(CALL ${tool}_convert "${source_file}"
+			${size}
+			"${working_directory}"
+			"${output_pattern}"
+			${COMMAND_ECHO}
+			png_rendered
+		)
+		message(STATUS " ${tool}_convert: ${source_file} --> ${png_rendered}")
+
+
+		endforeach() # FIXME: Remove, this is just for unit teting
+
+
 	endforeach()
 endfunction()
 
@@ -50,12 +73,13 @@ function(inkscape_convert source_file size working_directory pattern command_ech
 		COMMAND_ERROR_IS_FATAL ANY
 		ERROR_VARIABLE inkscape_output)
 
-		# Inkscpae doesn't properly return error codes, parse output instead
-		if("${inkscape_output}" MATCHES "(Failed|failed|error)")
-			message(FATAL_ERROR "${inkscape_output}")
-		endif()
+	# Inkscape doesn't properly set error codes
+	if(NOT EXISTS "${png_out}")
+		# Blindly dump whatever was on stderr
+		message(FATAL_ERROR " inkscape_convert: ${png_out} was not created:\n${inkscape_output}")
+	endif()
 
-		set(${result} "${png_out}" PARENT_SCOPE)
+	set(${result} "${png_out}" PARENT_SCOPE)
 endfunction()
 
 # RSVG is much faster than inkscape
@@ -71,6 +95,36 @@ function(rsvg_convert source_file size working_directory pattern command_echo re
 		COMMAND_ERROR_IS_FATAL ANY)
 
 		set(${result} "${png_out}" PARENT_SCOPE)
+endfunction()
+
+function(gimp_convert source_file size working_directory pattern command_echo result)
+	patternize_file("${source_file}" ${size} "${pattern}" scaled_size png_out)
+	# Use scheme language for gimp batch conversion
+
+	file(READ "${source_directory}/cmake/branding/gimp_convert.scm.in" gimp_lisp)
+	string(REPLACE "@source_file@" "${source_file}" gimp_lisp "${gimp_lisp}")
+	string(REPLACE "@width@" "${scaled_size}" gimp_lisp "${gimp_lisp}")
+	string(REPLACE "@height@" "${scaled_size}" gimp_lisp "${gimp_lisp}")
+	string(REPLACE "@resolution@" "72" gimp_lisp "${gimp_lisp}")
+	string(REPLACE "@png_out@" "${png_out}" gimp_lisp "${gimp_lisp}")
+
+	execute_process(COMMAND gimp
+		--no-interface
+		--console-messages
+		--batch "${gimp_lisp}"
+		--batch  "(gimp-quit 0)" # quit must be a separate batch line or it will hang
+		WORKING_DIRECTORY "${working_directory}"
+		OUTPUT_QUIET
+        ERROR_QUIET
+		COMMAND_ECHO ${command_echo}
+		COMMAND_ERROR_IS_FATAL ANY)
+
+	# Gimp doesn't properly set error codes
+	if(NOT EXISTS "${png_out}")
+		message(FATAL_ERROR " gimp_convert: ${png_out} was not created:\n...\n${gimp_lisp}\n...\n")
+	endif()
+
+	set(${result} "${png_out}" PARENT_SCOPE)
 endfunction()
 
 # FIXME:

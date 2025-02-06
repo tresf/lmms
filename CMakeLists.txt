@@ -28,6 +28,9 @@ SET(LMMS_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 # Import of windows.h breaks min()/max()
 ADD_DEFINITIONS(-DNOMINMAX)
 
+file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/branding")
+file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/lmms.iconset")
+
 include(SvgRecolor)
 set(svg_green "#27ab5f;#249a56;#34d07b;opacity=\".1\" fill=\"#fff\"")
 set(svg_blue "#3992cb;#2b6fc5;#62a8d4;opacity=\".1\" fill=\"#fff\"")
