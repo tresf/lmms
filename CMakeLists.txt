@@ -28,23 +28,8 @@ SET(LMMS_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 # Import of windows.h breaks min()/max()
 ADD_DEFINITIONS(-DNOMINMAX)
 
-file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/branding")
-file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/lmms.iconset")
-
-include(SvgRecolor)
-set(svg_green "#27ab5f;#249a56;#34d07b;opacity=\".1\" fill=\"#fff\"")
-set(svg_blue "#3992cb;#2b6fc5;#62a8d4;opacity=\".1\" fill=\"#fff\"")
-set(svg_purple "#5547bd;#493ba1;#7871c5;opacity=\".05\" fill=\"#fff\"")
-
-svg_recolor(svg_green svg_purple "${CMAKE_SOURCE_DIR}/cmake/linux/icons/scalable/apps/lmms.svg" svg_recolored)
-
-include(SvgConvert)
-svg_convert("16;16@2;32;32@2;48;48@2" "${svg_recolored}" "${CMAKE_CURRENT_BINARY_DIR}/branding/%size%x%size%@%mult%/%name%.png")
-
-include(IcnsConvert)
-icns_convert("${svg_recolored}" "${CMAKE_CURRENT_BINARY_DIR}/lmms.icns")
-
-message(FATAL_ERROR "Done")
+### FIXME: REMOVE!
+add_subdirectory(cmake/branding)
 
 # CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES is not set correctly for MinGW until
 # CMake 3.14.1, so avoid specifying system include directories on affected
