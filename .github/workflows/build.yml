@@ -18,3 +18,4 @@ jobs:
       - name: Run test
         run: |
           git log -1 --pretty=format:"%H"
+          git log --oneline -n 5
