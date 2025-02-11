@@ -17,5 +17,4 @@ jobs:
           fetch-depth: 0
       - name: Run test
         run: |
-          git log -1 --pretty=format:"%H"
-          git log --oneline -n 5
+          git log --oneline |sed -n 2p
