@@ -5,8 +5,8 @@ endif()
 
 # the final slash needs to be flipped for CPACK_PACKAGE_ICON to work:
 #   https://cmake.org/pipermail/cmake/2008-June/022085.html
-SET(CPACK_PACKAGE_ICON                  "${CMAKE_CURRENT_BINARY_DIR}/cmake/nsis\\\\nsis_branding.bmp")
-SET(CPACK_NSIS_MUI_ICON                 "${CMAKE_CURRENT_BINARY_DIR}/cmake/nsis/lmms.ico")
+SET(CPACK_PACKAGE_ICON                  "${CMAKE_SOURCE_DIR}/cmake/nsis\\\\nsis_branding.bmp")
+SET(CPACK_NSIS_MUI_ICON                 "${CMAKE_SOURCE_DIR}/cmake/nsis/icon.ico")
 SET(CPACK_NSIS_INSTALLED_ICON_NAME      "${CMAKE_PROJECT_NAME}.exe" PARENT_SCOPE)
 SET(CPACK_NSIS_DISPLAY_NAME             "${PROJECT_NAME_UCASE} ${VERSION}" PARENT_SCOPE)
 SET(CPACK_NSIS_HELP_LINK                "${PROJECT_URL}" PARENT_SCOPE)
@@ -42,7 +42,7 @@ IF(WIN64)
 	endif()
 	SET(CPACK_INSTALL_FIX "$PROGRAMFILES64\\\\${CPACK_PACKAGE_INSTALL_DIRECTORY}\\\\")
 	SET(CPACK_NSIS_DEFINES "
-		${CPACK_NSIS_DEFINES} 
+		${CPACK_NSIS_DEFINES}
 		InstallDir ${CPACK_INSTALL_FIX}
 		")
 ENDIF()
@@ -65,10 +65,6 @@ endif()
 # Windows resource compilers
 CONFIGURE_FILE("lmms.rc.in"             "${CMAKE_BINARY_DIR}/lmms.rc")
 CONFIGURE_FILE("zynaddsubfx.rc.in"      "${CMAKE_BINARY_DIR}/plugins/ZynAddSubFx/zynaddsubfx.rc")
-
-# Handle branding
-file(COPY "nsis_branding.bmp" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-file(COPY "lmms.ico" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 INSTALL(FILES "lmms.exe.manifest" DESTINATION .)
 INSTALL(FILES "lmms.VisualElementsManifest.xml" DESTINATION .)

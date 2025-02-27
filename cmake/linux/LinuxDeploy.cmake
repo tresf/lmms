@@ -87,6 +87,14 @@ foreach(_file ${files})
 	endif()
 endforeach()
 
+# Copy optional branded files
+if(EXISTS "${CPACK_BINARY_DIR}/cmake/install/cpack")
+	file(GLOB branded_items "${CPACK_BINARY_DIR}/cmake/install/cpack/*")
+	foreach(item "${branded_items}")
+		file(COPY "${item}" DESTINATION "${APP}")
+	endforeach()
+endif()
+
 # Copy Suil modules
 if(CPACK_SUIL_MODULES)
 	set(SUIL_MODULES_TARGET "${APP}/usr/lib/${CPACK_SUIL_MODULES_PREFIX}")

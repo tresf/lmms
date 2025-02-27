@@ -67,12 +67,14 @@ list(REVERSE mime_parts)
 list(JOIN mime_parts "." MACOS_MIMETYPE_ID)
 configure_file("${CPACK_CURRENT_SOURCE_DIR}/lmms.plist.in" "${APP}/Contents/Info.plist" @ONLY)
 file(COPY "${CPACK_CURRENT_SOURCE_DIR}/project.icns" DESTINATION "${APP}/Contents/Resources")
+file(COPY "${CPACK_CURRENT_SOURCE_DIR}/${lmms}.icns" DESTINATION "${APP}/Contents/Resources")
 
-# Branding override
-if(EXISTS "${CPACK_CURRENT_BINARY_DIR}/${lmms}.icns")
-	file(COPY "${CPACK_CURRENT_BINARY_DIR}/${lmms}.icns" DESTINATION "${APP}/Contents/Resources")
-else()
-	file(COPY "${CPACK_CURRENT_SOURCE_DIR}/${lmms}.icns" DESTINATION "${APP}/Contents/Resources")
+# Copy optional branded files
+if(EXISTS "${CPACK_BINARY_DIR}/cmake/install/cpack")
+	file(GLOB branded_items "${CPACK_BINARY_DIR}/cmake/install/cpack/*")
+	foreach(item "${branded_items}")
+		file(COPY "${item}" DESTINATION "${APP}")
+	endforeach()
 endif()
 
 # Copy Suil modules
