@@ -5,6 +5,8 @@
 cmake_policy(SET CMP0011 NEW)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/branding")
+include(SvgRecolor)
+include(SvgConvert)
 
 set(linux_sizes 16 16@2 24 24@2 32 32@2 48 48@2 64 64@2 128 128@2 256)
 
@@ -14,7 +16,6 @@ set(svg_blue "#3992cb;#2b6fc5;#62a8d4;opacity=\".1\" fill=\"#fff\"")
 set(svg_purple "#5547bd;#493ba1;#7871c5;opacity=\".05\" fill=\"#fff\"")
 
 # Recolor SVGs
-include(SvgRecolor)
 svg_recolor(svg_green svg_purple "${CMAKE_SOURCE_DIR}/data/scalable/lmms.svg" lmms_recolored)
 svg_recolor(svg_green svg_purple "${CMAKE_SOURCE_DIR}/data/scalable/project.svg" project_recolored)
 svg_recolor(svg_green svg_purple "${CMAKE_SOURCE_DIR}/data/scalable/splash.svg" splash_recolored)
@@ -44,7 +45,6 @@ else()
 endif()
 
 # Theme files
-include(SvgConvert)
 svg_convert(128 "${lmms_recolored}" "${BRANDED_OUTPUT}/${THEMES_DIR}/default/icon.png")
 svg_convert(32 "${lmms_recolored}" "${BRANDED_OUTPUT}/${THEMES_DIR}/default/icon_small.png")
 ### FIXME: add width/height support to svg_convert for gimp
