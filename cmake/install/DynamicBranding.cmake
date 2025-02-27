@@ -1,7 +1,6 @@
 # Provide branding steps
-# - Files created here are intended for install-time
-# - Files used for build-time are source-only and are currently not supported
-# - For packaging steps, see LinuxDeploy.cmake, MacDeployQt.cmake
+# - This script is intended to be run during install phase
+# - CPack-related files will be outputted to cmake/install/branding/cpack
 
 cmake_policy(SET CMP0011 NEW)
 
