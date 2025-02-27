@@ -47,11 +47,3 @@ function(ico_convert source_file destination_file)
 	file(REMOVE "${working_directory}/${name}.iconset")
 	message(STATUS " ico_convert: ${source_file} --> ${destination_file}")
 endfunction()
-
-#convert icon.svg -scale 16 tmp/16.png
-#convert icon.svg -scale 32 tmp/32.png
-#convert icon.svg -scale 48 tmp/48.png
-#convert icon.svg -scale 128 tmp/128.png
-#convert icon.svg -scale 256 tmp/256.png
-#Afterwards, the multiple png files can be packed in the final icon.ico with:
-#convert tmp/16.png tmp/32.png tmp/48.png tmp/128.png tmp/256.png  icon.ico
