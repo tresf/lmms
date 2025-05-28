@@ -79,11 +79,11 @@ class LMMS_EXPORT Knob : public FloatModelEditorBase
 public:
 	enum class Mode
 	{
-		NonLegacy, Legacy
+		Scaled, Legacy
 	};
 
 	/**
-	 * @brief Construct a Knob with the given style and no label.
+	 * @brief Construct a Legacy Knob with the given style and no label.
 	 * 
 	 * @param _knob_num Style of the knob
 	 * @param _parent Parent widget
@@ -97,10 +97,10 @@ public:
 	 * @param knobNum Style of the knob
 	 * @param labelText Text for the label
 	 * @param parent Parent widget
-	 * @param mode Builds a knob with legacy behavior (font size always 12 pixels) if set to Legacy. Default is NonLegacy.
+	 * @param mode Builds a knob with legacy behavior (font size always 12 pixels) if set to Legacy. Default is Scaled.
 	 * @param name Object name of the widget
 	 */
-	Knob(KnobType knobNum, const QString& labelText, QWidget* parent = nullptr, Mode mode = Mode::NonLegacy, const QString& name = QString());
+	Knob(KnobType knobNum, const QString& labelText, QWidget* parent = nullptr, const QString& name = QString());
 
 	/**
 	 * @brief Constructs a knob with a label font in the pixel size.
@@ -117,6 +117,7 @@ public:
 	
 	Knob( const Knob& other ) = delete;
 
+	void setLabel(const QString& txt);
 	void setHtmlLabel( const QString &htmltxt );
 
 	void setTotalAngle( float angle );
@@ -148,33 +149,31 @@ public:
 
 
 protected:
-	void setLabel(const QString& txt);
-	
 	void paintEvent(QPaintEvent*) override;
 
 	void changeEvent(QEvent * ev) override;
 
 	/*!
-	 * Legacy mode affects how the label of the knob is rendered.
+	 * Layout mode affects how the label of the knob is rendered.
 	 *
-	 * In non-legacy mode (the default) the height of the label text is taken into account when a new fixed
+	 * In Scaled mode (the default) the height of the label text is taken into account when a new fixed
 	 * size is computed for the Knob. When the label text is painted the descent of the font is used to
 	 * compute the base line.
 	 * 
-	 * Enabling legacy mode leads to the following behavior:
+	 * Enabling Legacy mode leads to the following behavior:
 	 * * The height of the label is not taken into account when the new fixed height of the Knob is computed.
 	 *   Instead a fixed size of 10 is added for the label.
 	 * * When the knob is painted the baseline of the font is always set to 2 pixels away from the lower side
 	 *   of the Knob's rectangle.
 	 */
-	bool legacyMode() const { return m_legacyMode; }
+	Mode mode() const { return m_mode; }
 
 	/*!
-	 * Set the button to legacy mode (true) or non-legacy mode (false).
+	 * Set the button layout mode
 	 *
-	 * @see legacyMode().
+	 * @see mode().
 	 */
-	void setLegacyMode(bool legacyMode);
+	void setMode(Mode mode);
 
 private:
 	QLineF calculateLine( const QPointF & _mid, float _radius,
@@ -192,7 +191,7 @@ private:
 	void updateFixedSize();
 
 	QString m_label;
-	bool m_legacyMode = false;
+	Mode m_mode = Mode::Scaled;
 	bool m_isHtmlLabel;
 	QTextDocument* m_tdRenderer;
 

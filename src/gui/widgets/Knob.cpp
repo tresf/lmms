@@ -37,7 +37,7 @@
 
 namespace lmms::gui
 {
-
+[[deprecated]]
 Knob::Knob( KnobType _knob_num, QWidget * _parent, const QString & _name ) :
 	FloatModelEditorBase(DirectionOfManipulation::Vertical, _parent, _name),
 	m_label( "" ),
@@ -48,23 +48,21 @@ Knob::Knob( KnobType _knob_num, QWidget * _parent, const QString & _name ) :
 	m_textColor( 255, 255, 255 ),
 	m_knobNum( _knob_num )
 {
+	setMode(Mode::Legacy);
 	initUi( _name );
 }
 
-Knob::Knob(KnobType knobNum, const QString& labelText, QWidget* parent, Mode mode, const QString& name) :
+Knob::Knob(KnobType knobNum, const QString& labelText, QWidget* parent, const QString& name) :
 	Knob(knobNum, parent, name)
 {
+	setMode(Mode::Scaled);
 	setLabel(labelText);
-
-	if (mode == Mode::Legacy)
-	{
-		setLegacyMode(true);
-	}
 }
 
 Knob::Knob(KnobType knobNum, const QString& labelText, int labelPixelSize, QWidget* parent, const QString& name) :
 	Knob(knobNum, parent, name)
 {
+	setMode(Mode::Scaled);
 	setFont(adjustedToPixelSize(font(), labelPixelSize));
 	setLabel(labelText);
 }
@@ -147,7 +145,7 @@ void Knob::onKnobNumUpdated()
 
 
 
-
+[[deprecated("Label should be set in constructor")]]
 void Knob::setLabel(const QString& txt)
 {
 	m_label = txt;
@@ -180,9 +178,9 @@ void Knob::setHtmlLabel(const QString &htmltxt)
 	update();
 }
 
-void Knob::setLegacyMode(bool legacyMode)
+void Knob::setMode(Mode mode)
 {
-	m_legacyMode = legacyMode;
+	m_mode = mode;
 
 	updateFixedSize();
 
@@ -191,36 +189,40 @@ void Knob::setLegacyMode(bool legacyMode)
 
 void Knob::updateFixedSize()
 {
-	if (legacyMode())
+	switch(m_mode)
 	{
-		if (m_knobPixmap)
+		case(Mode::Legacy):
 		{
-			// In legacy mode only the width of the label is taken into account while the height is not
-			const int labelWidth = horizontalAdvance(QFontMetrics(adjustedToPixelSize(font(), SMALL_FONT_SIZE)), m_label);
-			const int width = std::max(m_knobPixmap->width(), labelWidth);
+			if (m_knobPixmap)
+			{
+				// In legacy mode only the width of the label is taken into account while the height is not
+				const int labelWidth = horizontalAdvance(QFontMetrics(adjustedToPixelSize(font(), SMALL_FONT_SIZE)), m_label);
+				const int width = std::max(m_knobPixmap->width(), labelWidth);
 
-			// Legacy mode assumes that the label will fit into 10 pixels plus some of the pixmap area
-			setFixedSize(width, m_knobPixmap->height() + 10);
+				// Legacy mode assumes that the label will fit into 10 pixels plus some of the pixmap area
+				setFixedSize(width, m_knobPixmap->height() + 10);
+			}
 		}
-	}
-	else
-	{
-		// Styled knobs do not use pixmaps and have no labels. Their size is set from the outside and
-		// they are painted within these limits. Hence we should not compute a new size from a pixmap
-		// and/or label the case of styled knobs.
-		if (knobNum() == KnobType::Styled)
+		case(Mode::Scaled):
+		default:
 		{
-			return;
+			// Styled knobs do not use pixmaps and have no labels. Their size is set from the outside and
+			// they are painted within these limits. Hence we should not compute a new size from a pixmap
+			// and/or label the case of styled knobs.
+			if (knobNum() == KnobType::Styled)
+			{
+				return;
+			}
+
+			QSize pixmapSize = m_knobPixmap ? m_knobPixmap->size() : QSize(0, 0);
+
+			auto fm = QFontMetrics(font());
+
+			const int width = std::max(pixmapSize.width(), horizontalAdvance(fm, m_label));
+			const int height = pixmapSize.height() + fm.height();
+
+			setFixedSize(width, height);
 		}
-
-		QSize pixmapSize = m_knobPixmap ? m_knobPixmap->size() : QSize(0, 0);
-
-		auto fm = QFontMetrics(font());
-
-		const int width = std::max(pixmapSize.width(), horizontalAdvance(fm, m_label));
-		const int height = pixmapSize.height() + fm.height();
-
-		setFixedSize(width, height);
 	}
 }
 
@@ -509,13 +511,13 @@ void Knob::drawLabel(QPainter& p)
 	{
 		if (!m_isHtmlLabel)
 		{
-			if (legacyMode())
+			if (m_mode == Mode::Legacy)
 			{
 				p.setFont(adjustedToPixelSize(p.font(), SMALL_FONT_SIZE));
 			}
 			auto fm = p.fontMetrics();
 			const auto x = (width() - horizontalAdvance(fm, m_label)) / 2;
-			const auto descent = legacyMode() ? 2 : fm.descent();
+			const auto descent = m_mode == Mode::Legacy ? 2 : fm.descent();
 			const auto y = height() - descent; 
 
 			p.setPen(textColor());

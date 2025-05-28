@@ -41,9 +41,10 @@ class LMMS_EXPORT TempoSyncKnob : public Knob
 {
 	Q_OBJECT
 public:
+	[[deprecated]]
 	TempoSyncKnob( KnobType knobNum, QWidget* parent = nullptr, const QString& name = QString() );
 
-	TempoSyncKnob(KnobType knobNum, const QString& labelText, QWidget* parent = nullptr, Mode mode = Mode::NonLegacy, const QString& name = QString());
+	TempoSyncKnob(KnobType knobNum, const QString& labelText, QWidget* parent = nullptr, const QString& name = QString());
 
 	/**
 	 * @brief Constructs a tempo sync knob with a label font in the pixel size.
