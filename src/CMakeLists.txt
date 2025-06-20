@@ -178,6 +178,7 @@ SET(LMMS_REQUIRED_LIBS ${LMMS_REQUIRED_LIBS}
 	${FFTW3F_LIBRARIES}
 	SampleRate::samplerate
 	SndFile::sndfile
+	Threads::Threads
 	${EXTRA_LIBRARIES}
 )
 
