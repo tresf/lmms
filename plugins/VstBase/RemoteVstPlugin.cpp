@@ -137,8 +137,11 @@ class RemoteVstPlugin;
 
 lmms::RemoteVstPlugin * __plugin = nullptr;
 
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
 HWND __MessageHwnd = nullptr;
+#endif
+
+#ifdef USE_WIN32_THREADS
 DWORD __processingThreadId = 0;
 #else
 pthread_t __processingThreadId = 0;
@@ -433,7 +436,7 @@ private:
 
 	std::string m_shortName;
 
-#ifndef _WIN32
+#ifdef _WIN32
 	HINSTANCE m_libInst;
 #else
 	void* m_libInst = nullptr;
@@ -1757,9 +1760,10 @@ intptr_t RemoteVstPlugin::hostCallback( AEffect * _effect, int32_t _opcode,
 			SHOW_CALLBACK ("amc: audioMasterIdle\n" );
 			// call application idle routine (this will
 			// call effEditIdle for all open editors too)
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
 			PostMessage( __MessageHwnd, WM_USER, static_cast<WPARAM>(GuiThreadMessage::GiveIdle), 0 );
 #else
+			// Linux
 			__plugin->sendX11Idle();
 #endif
 			return 0;
@@ -2072,7 +2076,7 @@ intptr_t RemoteVstPlugin::hostCallback( AEffect * _effect, int32_t _opcode,
 		case audioMasterUpdateDisplay:
 			SHOW_CALLBACK( "amc: audioMasterUpdateDisplay\n" );
 			// something has changed, update 'multi-fx' display
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
 			PostMessage( __MessageHwnd, WM_USER, static_cast<WPARAM>(GuiThreadMessage::GiveIdle), 0 );
 #else
 			__plugin->sendX11Idle();
@@ -2277,7 +2281,7 @@ bool RemoteVstPlugin::setupMessageWindow()
 
 
 
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
 DWORD WINAPI RemoteVstPlugin::guiEventLoop()
 {
 	MSG msg;
