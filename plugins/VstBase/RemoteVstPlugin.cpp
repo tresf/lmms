@@ -40,7 +40,6 @@
 #endif
 
 #ifdef LMMS_BUILD_LINUX
-
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
@@ -49,26 +48,25 @@
 #include <sched.h>
 #endif
 
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 #include <wine/exception.h>
 #endif
 
 #endif // LMMS_BUILD_LINUX
 
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 #define USE_WS_PREFIX
 #include <windows.h>
 #else
 #include <dlfcn.h>
-#include <pthread.h>
+#endif // _WIN32
+
+#ifdef NATIVE_LINUX_VST
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xos.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
-#include <sstream>
-#include <time.h>
-
 // https://stackoverflow.com/questions/22476110/c-compiling-error-including-x11-x-h-x11-xlib-h
 #undef Bool
 #undef CursorShape
@@ -81,7 +79,13 @@
 #undef None
 #undef Status
 #undef Unsorted
-#endif
+#endif // NATIVE_LINUX_VST
+
+#ifndef USE_WIN32_THREADS
+#include <pthread.h>
+#include <sstream>
+#include <time.h>
+#endif // USE_WIN32_THREADS
 
 #include <mutex>
 
@@ -133,7 +137,7 @@ class RemoteVstPlugin;
 
 lmms::RemoteVstPlugin * __plugin = nullptr;
 
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 HWND __MessageHwnd = nullptr;
 DWORD __processingThreadId = 0;
 #else
@@ -337,11 +341,11 @@ public:
 	}
 
 	inline void queueMessage( const message & m ) {
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 		pthread_mutex_lock(&message_mutex);
 #endif
 		m_messageList.push( m );
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 		pthread_mutex_unlock(&message_mutex);
 #endif
 	}
@@ -362,7 +366,7 @@ public:
 	void sendX11Idle();
 #endif
 
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 	static DWORD WINAPI processingThread( LPVOID _param );
 #else
 	static void * processingThread( void * _param );
@@ -370,13 +374,13 @@ public:
 	
 	static bool setupMessageWindow();
 	
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 	static DWORD WINAPI guiEventLoop();
 #else
 	void guiEventLoop();
-#endif
+#endif // _WIN32
 	
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 	static LRESULT CALLBACK wndProc( HWND hwnd, UINT uMsg,
 					WPARAM wParam, LPARAM lParam );
 #endif
@@ -429,21 +433,21 @@ private:
 
 	std::string m_shortName;
 
-#ifndef NATIVE_LINUX_VST
+#ifndef _WIN32
 	HINSTANCE m_libInst;
 #else
 	void* m_libInst = nullptr;
-#endif
+#endif // _WIN32
 
 	AEffect * m_plugin;
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 	HWND m_window = nullptr;
 #else
 	Window m_window = 0;
 	Display* m_display = nullptr;
 	Atom m_wmDeleteMessage;
 	bool m_x11WindowVisible = false;
-#endif
+#endif // _WIN32
 	intptr_t m_windowID;
 	int m_windowWidth;
 	int m_windowHeight;
@@ -453,10 +457,10 @@ private:
 
 	bool m_processing;
 
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 	pthread_mutex_t message_mutex = PTHREAD_MUTEX_INITIALIZER;
 	bool m_shouldQuit = false;
-#endif
+#endif // USE_WIN32_THREADS
 	std::queue<message> m_messageList;
 	bool m_shouldGiveIdle;
 
@@ -544,11 +548,11 @@ RemoteVstPlugin::~RemoteVstPlugin()
 
 	if( m_libInst != nullptr )
 	{
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 		FreeLibrary( m_libInst );
 #else
 		dlclose(m_libInst);
-#endif
+#endif // _WIN32
 		m_libInst = nullptr;
 	}
 
@@ -574,11 +578,11 @@ bool RemoteVstPlugin::processMessage( const message & _m )
 			return true;
 
 		case IdToggleUI:
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 			if( m_window && IsWindowVisible( m_window ) )
 #else
 			if (m_window && m_x11WindowVisible)
-#endif
+#endif // _WIN32
 			{
 				hideEditor();
 			}
@@ -590,11 +594,11 @@ bool RemoteVstPlugin::processMessage( const message & _m )
 			return true;
 
 		case IdIsUIVisible:
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 			bool visible = m_window && IsWindowVisible( m_window );
 #else
 			bool visible = m_window && m_x11WindowVisible;
-#endif
+#endif // _WIN32
 			sendMessage( message( IdIsUIVisible )
 						 .addInt( visible ? 1 : 0 ) );
 			return true;
@@ -602,10 +606,10 @@ bool RemoteVstPlugin::processMessage( const message & _m )
 	}
 	else if (EMBED && _m.id == IdShowUI)
 	{
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 		ShowWindow( m_window, SW_SHOWNORMAL );
 		UpdateWindow( m_window );
-#endif
+#endif // _WIN32
 		return true;
 	}
 
@@ -697,19 +701,19 @@ bool RemoteVstPlugin::processMessage( const message & _m )
 
 		case IdIdle:
 		{
-#ifdef NATIVE_LINUX_VST
+#ifndef _WIN32
 			idle();
-#endif
+#endif // _WIN32
 			break;
 		}
 		
-#ifdef NATIVE_LINUX_VST
+#ifndef _WIN32
 		case IdQuit:
 		{
 			m_shouldQuit = true;
 			break;
 		}
-#endif
+#endif // _WIN32
 		default:
 			return RemotePluginClient::processMessage( _m );
 	}
@@ -789,7 +793,8 @@ void RemoteVstPlugin::initEditor()
 		return;
 	}
 
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
+	// Handle Windows (both natively on Windows AND via Wine)
 	HMODULE hInst = GetModuleHandle( nullptr );
 	if( hInst == nullptr )
 	{
@@ -831,13 +836,15 @@ void RemoteVstPlugin::initEditor()
 	pluginDispatch( effEditTop );
 
 #ifdef LMMS_BUILD_LINUX
+	// Handle wine
 	m_windowID = (intptr_t) GetProp( m_window, "__wine_x11_whole_window" );
 #else
-	// 64-bit versions of Windows use 32-bit handles for interoperability
+	// Handle Windows (64-bit uses 32-bit handles for interoperability)
 	m_windowID = (intptr_t) m_window;
-#endif
+#endif // LMMS_BUILD_LINUX
 
 #else
+	// Handle Linux X11
 	Atom prop_atom, val_atom;
 	
 	if (m_display == nullptr)
@@ -874,7 +881,7 @@ void RemoteVstPlugin::initEditor()
 	
 	pluginDispatch(effEditTop);
 	m_x11WindowVisible = true;
-#endif // NATIVE_LINUX_VST
+#endif // _WIN32
 }
 
 
@@ -883,9 +890,11 @@ void RemoteVstPlugin::initEditor()
 void RemoteVstPlugin::showEditor() {
 	if( !EMBED && !HEADLESS && m_window )
 	{
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
+		// Handle Windows (both natively on Windows AND via Wine)
 		ShowWindow( m_window, SW_SHOWNORMAL );
 #else
+		// Handle Linux
 		if (!m_x11WindowVisible)
 		{
 			XMapWindow(m_display, m_window);
@@ -902,16 +911,17 @@ void RemoteVstPlugin::showEditor() {
 void RemoteVstPlugin::hideEditor() {
 	if( !EMBED && !HEADLESS && m_window )
 	{
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 		ShowWindow( m_window, SW_HIDE );
 #else
+		// Linux
 		if (m_x11WindowVisible)
 		{
 			XUnmapWindow(m_display, m_window);
 			XFlush(m_display);
 			m_x11WindowVisible = false;
 		}
-#endif
+#endif // _WIN32
 	}
 }
 
@@ -926,18 +936,19 @@ void RemoteVstPlugin::destroyEditor()
 	}
 
 	pluginDispatch( effEditClose );
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 	// Destroying the window takes some time in Wine 1.8.5
 	DestroyWindow( m_window );
 	m_window = nullptr;
 #else
+	// Linux
 	if (m_display)
 	{
 		XCloseDisplay(m_display);
 	}
 	m_display = nullptr;
 	m_window = 0;
-#endif
+#endif // _WIN32
 }
 
 
@@ -945,7 +956,7 @@ void RemoteVstPlugin::destroyEditor()
 
 bool RemoteVstPlugin::load( const std::string & _plugin_file )
 {
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 	if( ( m_libInst = LoadLibraryW( toWString(_plugin_file).c_str() ) ) == nullptr )
 	{
 		DWORD error = GetLastError();
@@ -961,7 +972,7 @@ bool RemoteVstPlugin::load( const std::string & _plugin_file )
 #endif
 
 	using mainEntryPointer = AEffect* (VST_CALL_CONV*) (audioMasterCallback);
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 	mainEntryPointer mainEntry = (mainEntryPointer)
 				GetProcAddress( m_libInst, "VSTPluginMain" );
 	if( mainEntry == nullptr )
@@ -1649,7 +1660,7 @@ int RemoteVstPlugin::updateInOutCount()
 		return 1;
 	}
 	
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 	if( GetCurrentThreadId() == __processingThreadId )
 #else
 	if( pthread_equal(pthread_self(), __processingThreadId) )
@@ -1746,7 +1757,7 @@ intptr_t RemoteVstPlugin::hostCallback( AEffect * _effect, int32_t _opcode,
 			SHOW_CALLBACK ("amc: audioMasterIdle\n" );
 			// call application idle routine (this will
 			// call effEditIdle for all open editors too)
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 			PostMessage( __MessageHwnd, WM_USER, static_cast<WPARAM>(GuiThreadMessage::GiveIdle), 0 );
 #else
 			__plugin->sendX11Idle();
@@ -1932,7 +1943,7 @@ intptr_t RemoteVstPlugin::hostCallback( AEffect * _effect, int32_t _opcode,
 			}
 			__plugin->m_windowWidth = _index;
 			__plugin->m_windowHeight = _value;
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 			HWND window = __plugin->m_window;
 			DWORD dwStyle = GetWindowLongPtr( window, GWL_STYLE );
 			RECT windowSize = { 0, 0, (int) _index, (int) _value };
@@ -1943,9 +1954,10 @@ intptr_t RemoteVstPlugin::hostCallback( AEffect * _effect, int32_t _opcode,
 					SWP_NOACTIVATE | SWP_NOMOVE |
 					SWP_NOOWNERZORDER | SWP_NOZORDER );
 #else
+			// Linux
 			XResizeWindow(__plugin->m_display, __plugin->m_window, (int) _index, (int) _value);
 			XFlush(__plugin->m_display);
-#endif
+#endif // _WIN32
 			__plugin->sendMessage(
 				message( IdVstPluginEditorGeometry ).
 					addInt( __plugin->m_windowWidth ).
@@ -2060,7 +2072,7 @@ intptr_t RemoteVstPlugin::hostCallback( AEffect * _effect, int32_t _opcode,
 		case audioMasterUpdateDisplay:
 			SHOW_CALLBACK( "amc: audioMasterUpdateDisplay\n" );
 			// something has changed, update 'multi-fx' display
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 			PostMessage( __MessageHwnd, WM_USER, static_cast<WPARAM>(GuiThreadMessage::GiveIdle), 0 );
 #else
 			__plugin->sendX11Idle();
@@ -2121,37 +2133,37 @@ void RemoteVstPlugin::idle()
 void RemoteVstPlugin::processUIThreadMessages()
 {
 	setProcessing( true );
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 	pthread_mutex_lock(&message_mutex);
 #endif
 	
 	size_t size = m_messageList.size();
 	
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 	pthread_mutex_unlock(&message_mutex);
 #endif
 
 	while( size )
 	{
 		
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 		pthread_mutex_lock(&message_mutex);
 #endif
 
 		message m = m_messageList.front();
 
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 		pthread_mutex_unlock(&message_mutex);
 #endif
 		
 		processMessage( m );
 		
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 		pthread_mutex_lock(&message_mutex);
 #endif
 
 		m_messageList.pop();
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 		pthread_mutex_unlock(&message_mutex);
 #endif
 		if( shouldGiveIdle() )
@@ -2162,12 +2174,12 @@ void RemoteVstPlugin::processUIThreadMessages()
 			}
 			setShouldGiveIdle( false );
 		}
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 		pthread_mutex_lock(&message_mutex);
 #endif
 
 		size = m_messageList.size();
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 		pthread_mutex_unlock(&message_mutex);
 #endif
 	}
@@ -2183,13 +2195,13 @@ void RemoteVstPlugin::sendX11Idle()
 #endif
 
 
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 DWORD WINAPI RemoteVstPlugin::processingThread( LPVOID _param )
 #else
 void * RemoteVstPlugin::processingThread(void * _param)
 #endif
 {
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 	__processingThreadId = GetCurrentThreadId();
 #else
 	__processingThreadId = pthread_self();
@@ -2215,7 +2227,7 @@ void * RemoteVstPlugin::processingThread(void * _param)
 		}
 		else
 		{
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 			PostMessage( __MessageHwnd,
 					WM_USER,
 					static_cast<WPARAM>(GuiThreadMessage::ProcessPluginMessage),
@@ -2227,7 +2239,7 @@ void * RemoteVstPlugin::processingThread(void * _param)
 	}
 
 	// notify GUI thread about shutdown
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 	PostMessage( __MessageHwnd, WM_USER, static_cast<WPARAM>(GuiThreadMessage::ClosePlugin), 0 );
 
 	return 0;
@@ -2244,7 +2256,7 @@ void * RemoteVstPlugin::processingThread(void * _param)
 
 bool RemoteVstPlugin::setupMessageWindow()
 {
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 	HMODULE hInst = GetModuleHandle( nullptr );
 	if( hInst == nullptr )
 	{
@@ -2265,7 +2277,7 @@ bool RemoteVstPlugin::setupMessageWindow()
 
 
 
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 DWORD WINAPI RemoteVstPlugin::guiEventLoop()
 {
 	MSG msg;
@@ -2318,10 +2330,10 @@ void RemoteVstPlugin::guiEventLoop()
 		}
 	}
 }
-#endif // NATIVE_LINUX_VST
+#endif // USE_WIN32_THREADS
 
 
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 LRESULT CALLBACK RemoteVstPlugin::wndProc( HWND hwnd, UINT uMsg,
 						WPARAM wParam, LPARAM lParam )
 {
@@ -2369,7 +2381,7 @@ LRESULT CALLBACK RemoteVstPlugin::wndProc( HWND hwnd, UINT uMsg,
 }
 
 
-#endif // NATIVE_LINUX_VST
+#endif // USE_WIN32_THREADS
 
 } // namespace lmms
 
@@ -2392,7 +2404,7 @@ int main( int _argc, char * * _argv )
 	const auto pollParentThread = lmms::PollParentThread{};
 #endif
 
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 	OleInitialize(nullptr);
 #else
 	XInitThreads();
@@ -2407,14 +2419,14 @@ int main( int _argc, char * * _argv )
 #endif
 #endif // LMMS_BUILD_LINUX
 
-#ifdef LMMS_BUILD_WIN32
+#ifdef _WIN32
 	if( !SetPriorityClass( GetCurrentProcess(), HIGH_PRIORITY_CLASS ) )
 	{
 		printf( "Notice: could not set high priority.\n" );
 	}
 #endif
 
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 	HMODULE hInst = GetModuleHandle( nullptr );
 	if( hInst == nullptr )
 	{
@@ -2500,7 +2512,7 @@ int main( int _argc, char * * _argv )
 		{
 			return -1;
 		}
-#ifndef NATIVE_LINUX_VST
+#ifdef USE_WIN32_THREADS
 		if( CreateThread( nullptr, 0, RemoteVstPlugin::processingThread,
 						__plugin, 0, nullptr ) == nullptr )
 #else
@@ -2515,13 +2527,13 @@ int main( int _argc, char * * _argv )
 		}
 
 		__plugin->guiEventLoop();
-#ifdef NATIVE_LINUX_VST
+#ifndef USE_WIN32_THREADS
 		pthread_join(__processingThreadId, nullptr);
 #endif
 	}
 
 	delete __plugin;
-#ifndef NATIVE_LINUX_VST
+#ifdef _WIN32
 	OleUninitialize();
 #endif
 	return 0;

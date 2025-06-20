@@ -33,6 +33,7 @@ set(export_variables
 		"LMMS_BUILD_WIN32"
 		"PLUGIN_DIR"
 		"LMMS_HAVE_LIBRT"
+		"LMMS_HAVE_PTHREAD_H"
 		"USE_WERROR"
 )
 

@@ -50,7 +50,7 @@ if(IS_WIN)
 else()
 	target_link_libraries(${EXE_NAME} dl X11)
 endif()
-if(NOT WIN32)
+if(LMMS_HAVE_PTHREAD_H)
 	target_link_libraries(${EXE_NAME} pthread)
 endif()
 
