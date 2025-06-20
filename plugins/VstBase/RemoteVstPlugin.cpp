@@ -379,14 +379,12 @@ public:
 	
 #ifdef _WIN32
 	static DWORD WINAPI guiEventLoop();
+
+	static LRESULT CALLBACK wndProc( HWND hwnd, UINT uMsg,
+					WPARAM wParam, LPARAM lParam );
 #else
 	void guiEventLoop();
 #endif // _WIN32
-	
-#ifdef USE_WIN32_THREADS
-	static LRESULT CALLBACK wndProc( HWND hwnd, UINT uMsg,
-					WPARAM wParam, LPARAM lParam );
-#endif
 
 private:
 	enum class GuiThreadMessage
@@ -2260,7 +2258,7 @@ void * RemoteVstPlugin::processingThread(void * _param)
 
 bool RemoteVstPlugin::setupMessageWindow()
 {
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
 	HMODULE hInst = GetModuleHandle( nullptr );
 	if( hInst == nullptr )
 	{
@@ -2274,7 +2272,7 @@ bool RemoteVstPlugin::setupMessageWindow()
 								hInst, nullptr );
 	// install GUI update timer
 	SetTimer( __MessageHwnd, 1000, 50, nullptr );
-#endif
+#endif // _WIN32
 
 	return true;
 }
@@ -2337,7 +2335,7 @@ void RemoteVstPlugin::guiEventLoop()
 #endif // USE_WIN32_THREADS
 
 
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
 LRESULT CALLBACK RemoteVstPlugin::wndProc( HWND hwnd, UINT uMsg,
 						WPARAM wParam, LPARAM lParam )
 {
@@ -2428,9 +2426,7 @@ int main( int _argc, char * * _argv )
 	{
 		printf( "Notice: could not set high priority.\n" );
 	}
-#endif
 
-#ifdef USE_WIN32_THREADS
 	HMODULE hInst = GetModuleHandle( nullptr );
 	if( hInst == nullptr )
 	{
@@ -2454,7 +2450,7 @@ int main( int _argc, char * * _argv )
 		return -1;
 	}
 
-#endif
+#endif // _WIN32
 	{
 	#ifdef SYNC_WITH_SHM_FIFO
 		int embedMethodIndex = 3;
