@@ -7,6 +7,7 @@
 # Suil_MODULES: List of full paths to Suil modules (e.g. "/usr/lib/suil-0/libsuil_x11.so;...")
 # Suil_MODULES_PREFIX: Only the directory name of the Suil_MODULES path (e.g. "suil-0")
 
+find_package(PkgConfig REQUIRED)
 pkg_check_modules(Suil QUIET suil-0)
 
 if(Suil_FOUND)
@@ -31,10 +32,20 @@ if(Suil_FOUND)
 			file(GLOB Suil_MODULES "${_modules_dir}/*.${_lib_ext}")
 			list(SORT Suil_MODULES)
 		endif()
+
+		set(Suil_QT_VERSION_MAJOR 0)
+
+        # Assume libsuil_x11_in_qt5.so belongs to Qt5, etc
+        foreach(_module IN LISTS Suil_MODULES)
+            if ("${_module}" MATCHES "qt([0-9]+)")
+                set(Suil_QT_VERSION_MAJOR "${CMAKE_MATCH_1}")
+                break()
+            endif()
+        endforeach()
 	endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(SuilModules
-	REQUIRED_VARS Suil_MODULES Suil_MODULES_PREFIX
+	REQUIRED_VARS Suil_MODULES Suil_MODULES_PREFIX Suil_QT_VERSION_MAJOR
 )
