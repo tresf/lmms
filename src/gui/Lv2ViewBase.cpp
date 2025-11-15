@@ -172,9 +172,9 @@ void Lv2ViewProc::writeToPlugin(uint32_t port_index,
 
 const char* Lv2ViewProc::hostUiTypeUri() {
 	return
-#if QT_VERSION_MAJOR == 5
+#if Suil_QT_VERSION_MAJOR == 5
 		LV2_UI__Qt5UI;
-#elif QT_VERSION_MAJOR == 6
+#elif Suil_QT_VERSION_MAJOR == 6
 		LV2_UI_PREFIX "Qt6UI";
 #else
 	nullptr;
